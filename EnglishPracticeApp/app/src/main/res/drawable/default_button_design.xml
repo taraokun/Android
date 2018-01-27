@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="false">
+        <!-- shape:rectangle(=四角形) -->
+        <shape android:shape="rectangle">
+            <solid android:color="#B1E25D" />
+            <corners android:radius="6dp" />
+            <stroke
+                android:width="2dp"
+                android:color="#D3F481"/>
+        </shape>
+    </item>
+
+
+    <!-- ボタンが押された状態 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#BBB1E25D" />
+            <corners android:radius="6dp" />
+            <stroke
+                android:width="2dp"
+                android:color="#bbD3F481"/>
+        </shape>
+    </item>
+</selector>

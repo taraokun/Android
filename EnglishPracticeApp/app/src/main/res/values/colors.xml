@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#99BB33</color>
+    <color name="colorPrimaryDark">#99cc66</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="actionbar_background">#99BB33</color>
+    <color name="start_button">#99dd11</color>
+    <color name="question_background">#B1E25D</color>
+</resources>
+

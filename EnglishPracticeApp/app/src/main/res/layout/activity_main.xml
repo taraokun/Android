@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="#ffffff"
+tools:context="to.msn.wings.englishpracticeapp.MainActivity">
+
+    <ImageView
+        android:src="@drawable/title_background"
+        android:scaleType="fitCenter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <ImageView
+        android:src="@drawable/title_name2"
+        android:scaleType="fitCenter"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="100dp"/>
+
+    <Button
+        android:id="@+id/start_game_button"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="140dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/default_button_design"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        android:text="Start Study"
+        android:onClick="mode_onClick"/>
+    <Button
+        android:id="@+id/exit_button"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="85dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/default_button_design"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        android:text="Option"
+        android:onClick="exit_onClick"/>
+
+</RelativeLayout>

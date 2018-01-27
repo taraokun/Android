@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name" >Tree</string>
+    <string name="level1">EASY</string>
+    <string name="level2">NORMAL</string>
+    <string name="level3">HARD</string>
+</resources>
