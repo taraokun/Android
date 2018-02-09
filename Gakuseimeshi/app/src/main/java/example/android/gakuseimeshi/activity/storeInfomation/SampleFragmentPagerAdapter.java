@@ -6,13 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import example.android.gakuseimeshi.activity.map.MapsActivity;
-import example.android.gakuseimeshi.activity.storeInfomation.Fragment.FirstFragment;
-import example.android.gakuseimeshi.activity.storeInfomation.Fragment.SecondFragment;
-import example.android.gakuseimeshi.activity.storeInfomation.Fragment.ThirdFragment;
+import example.android.gakuseimeshi.activity.storeInfomation.Fragment.InformationFragment;
 
 public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 4;
-    private String tabTitles[] = new String[]{"トップ", "メニュー", "口コミ", "地図"};
+    final int PAGE_COUNT = 2;
+    private String tabTitles[] = new String[]{"店舗情報", "地図"};
     private Context mContext;
 
     public SampleFragmentPagerAdapter(FragmentManager fm, Context mContext) {
@@ -29,12 +27,8 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch(position) {
             case 0:
-                return new FirstFragment();
+                return new InformationFragment();
             case 1:
-                return new SecondFragment();
-            case 2:
-                return new ThirdFragment();
-            case 3:
                 return new MapsActivity();
         }
         return null;

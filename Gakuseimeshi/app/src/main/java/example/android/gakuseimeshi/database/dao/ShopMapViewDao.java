@@ -113,6 +113,38 @@ public class ShopMapViewDao {
                 null,
                 null);
         Log.d("Error",String.valueOf(cursor.getCount()));
+        return getDatabaseData(cursor);
+    }
+
+
+    /**
+     * id検索
+     * @param id
+     * @return
+     */
+    public List<MapData> searchId(int id){
+
+        String whereText = COLUMN_ID + " = ?";
+        String[] id_str = {String.valueOf(id)};
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                whereText,
+                id_str,
+                null,
+                null,
+                null);
+        return getDatabaseData(cursor);
+    }
+
+
+    /**
+     * 検索結果をListで取得
+     * @param cursor
+     * @return
+     */
+    private List<MapData> getDatabaseData(Cursor cursor) {
+        List<MapData> mapDataList = new ArrayList<MapData>();
         while(cursor.moveToNext()) {
             MapData mapData = new MapData();
             mapData.setId(cursor.getInt(0));
@@ -128,6 +160,5 @@ public class ShopMapViewDao {
         }
         return mapDataList;
     }
-
 
 }

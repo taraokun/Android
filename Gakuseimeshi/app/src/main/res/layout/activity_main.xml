@@ -25,23 +25,28 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <!-- add maxline -->
                 <EditText
                     android:id="@+id/search_meal"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
+                    android:layout_weight="0.9"
                     android:layout_margin="10dp"
                     android:iconifiedByDefault="false"
-                    android:queryHint="@string/search_hint"/>
+                    android:queryHint="@string/search_hint"
+                    android:singleLine="true"/>
+
+                <!-- add background-->
                 <Button
                     android:id="@+id/search"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.7"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
                     android:layout_margin="10dp"
-                    android:text="検索"/>
+                    android:layout_weight="0.1"
+                    android:background="@drawable/places_ic_search"/>
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -73,99 +78,111 @@
                 android:orientation="vertical"
                 android:id="@+id/detailed_contents_area_linear"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
+                android:layout_height="wrap_content">
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <Button
+                    android:layout_height="wrap_content"
+                    android:weightSum="1">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="ジャンル"
+                        android:layout_weight="0.3"/>
+                    <TextView
                         android:id="@+id/genre_button"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:text="@string/genre"/>
-                    <TextView
-                        android:id="@+id/category_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:text="aaaaa"/>
+                        android:text="フレンチ"
+                        android:textSize="15dp"
+                        android:layout_marginTop="20dp"
+                        android:gravity="left"
+                        android:onClick="onClick"
+                        android:layout_weight="0.7"
+                        android:textColor="#000000"/>
                 </LinearLayout>
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:weightSum="1">
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.75"
-                        android:text="@string/budget"/>
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
+                        android:text="@string/budget"
+                        android:layout_weight="0.3"/>
+
+                    <EditText
+                        android:id="@+id/min_price"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25">
-                        <EditText
-                            android:id="@+id/min_price"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.3"
-                            android:maxLength="5"
-                            android:inputType="number"
-                            android:hint="@string/min"/>
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.4"
-                            android:text="@string/within"/>
-                        <EditText
-                            android:id="@+id/max_price"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.3"
-                            android:maxLength="5"
-                            android:inputType="number"
-                            android:hint="@string/max"/>
-                    </LinearLayout>
+                        android:layout_weight="0.3"
+                        android:maxLength="5"
+                        android:inputType="number"
+                        android:hint="@string/min"
+                        android:textSize="15dp"
+                        android:layout_marginTop="20dp"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.1"
+                        android:text="@string/within"
+                        android:textSize="20dp"
+                        android:layout_marginTop="20dp"/>
+                    <EditText
+                        android:id="@+id/max_price"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.3"
+                        android:maxLength="5"
+                        android:textSize="15dp"
+                        android:inputType="number"
+                        android:hint="@string/max"
+                        android:layout_marginTop="20dp"/>
+
                 </LinearLayout>
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:weightSum="1">
                     <TextView
-                        android:layout_weight="0.5"
-                        android:layout_width="match_parent"
+                        android:layout_weight="0.3"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="@string/area" />
                     <Spinner
                         android:id="@+id/Area_spinner"
-                        android:layout_weight="0.5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_weight="0.7"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
                     </Spinner>
                 </LinearLayout>
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:weightSum="1">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="オプション"
+                        android:layout_weight="0.3"/>
                     <CheckBox
                         android:id="@+id/open_check"
-                        android:layout_weight="0.5"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/open"/>
+                        android:text="@string/open"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.3"/>
+
                     <CheckBox
                         android:id="@+id/student_discout_check"
-                        android:layout_weight="0.5"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/student_discount"/>
+                        android:text="@string/student_discount"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.3"/>
                 </LinearLayout>
                 <Button
                     android:id="@+id/search_detail_button"
@@ -181,6 +198,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:id="@+id/custom_layout1"/>
+            android:id="@+id/custom_layout1"
+            android:onClick="moveDetail"/>
     </LinearLayout>
 </ScrollView>

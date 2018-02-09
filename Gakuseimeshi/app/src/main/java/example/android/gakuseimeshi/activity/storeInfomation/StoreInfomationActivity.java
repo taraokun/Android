@@ -13,13 +13,13 @@ import example.android.gakuseimeshi.R;
 
 public class StoreInfomationActivity extends AppCompatActivity {
     private ViewPager mViewPager;
-    public String storeName = "LA TERRA";
+    public String name = "LA TERRA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.store_infomation);
-        setTitle(storeName);
+        setTitle(name);
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager(), this));

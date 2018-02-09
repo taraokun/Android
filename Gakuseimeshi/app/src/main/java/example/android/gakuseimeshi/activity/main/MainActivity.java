@@ -1,11 +1,11 @@
 package example.android.gakuseimeshi.activity.main;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,20 +19,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import example.android.gakuseimeshi.R;
-import example.android.gakuseimeshi.activity.SubActivity2;
+import example.android.gakuseimeshi.activity.searchResult.SearchResultActivity;
 import example.android.gakuseimeshi.activity.main.expandLayout.ResizeAnimation;
 import example.android.gakuseimeshi.activity.main.expandLayout.StoreInformationLayout;
+import example.android.gakuseimeshi.activity.searchResult.SearchResultActivity;
 import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
 import example.android.gakuseimeshi.database.basicData.MapSearch;
 import example.android.gakuseimeshi.database.dao.ShopMapSearchDao;
 import example.android.gakuseimeshi.gurunavi.UploadAsyncTask;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener {
     private Button detailedButton;
     private CheckBox openCheck;
     private CheckBox studentDiscountCheck;
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     allSearchList = shopMapSearchDao.detailedSearch(category, min, max, area, open, studentDiscount);
                     shopMapSearchDao.closeDB();
                     ArrayList<MapSearch> allSearchArrayList = (ArrayList<MapSearch>)allSearchList;
-                    Intent intent = new Intent(this, SubActivity2.class);
+                    Intent intent = new Intent(this, SearchResultActivity.class);
                     intent.putExtra("Answers", allSearchArrayList);
                     this.startActivity(intent);
                     //デバッグ
@@ -151,15 +152,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
     //登録
+    //category_text削除
     private void findViews() {
         Mealname = (EditText) findViewById(R.id.search_meal);
         minPrice = (EditText)findViewById(R.id.min_price);
         maxPrice = (EditText)findViewById(R.id.max_price);
         findViewById(R.id.search).setOnClickListener(this);
+        categoryText = (TextView)findViewById(R.id.genre_button);
         findViewById(R.id.genre_button).setOnClickListener(this);
         findViewById(R.id.search_detail_button).setOnClickListener(this);
-        categoryText = (TextView)findViewById(R.id.category_text);
         detailedContentsAreaLinear = (LinearLayout)findViewById(R.id.detailed_contents_area_linear);
         detailedButton = (Button)findViewById(R.id.detailed_button);
         areaSpinner = (Spinner)findViewById(R.id.Area_spinner);
@@ -170,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //初期化
     private void init() {
+
     }
 
     //スピナー用アダプター
@@ -211,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+
     private void startRotateAnim(int toDegrees, int pivotX, int pivotY) {
         // 展開ボタンの180度回転アニメーションを生成
         RotateAnimation rotate = new RotateAnimation(0, toDegrees, pivotX, pivotY);
@@ -218,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rotate.setFillAfter(true);          // アニメーション表示後の状態を保持
         detailedButton.startAnimation(rotate);    // アニメーション開始
     }
+
 
     //カスタムレイアウトデバッグ用
     private void customLayoutSet(){
@@ -228,4 +234,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         storeInformationLayout.shopHour.setTypeface(Typeface.createFromAsset(getAssets(),"GenEiAntiqueTN-M.ttf"));
 
     }
+
+    public void moveDetail(View v){
+        Toast.makeText(this,"クリックされました。", Toast.LENGTH_SHORT).show();
+    }
+
 }

@@ -1,10 +1,12 @@
 package example.android.gakuseimeshi.database.basicData;
 
+import java.io.Serializable;
+
 /**
  * Created by Tomu on 2017/12/13.
  */
 
-public class MapData {
+public class MapData implements Serializable {
     private int id;
     private String name;
     private String nameKana;
