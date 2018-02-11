@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -41,8 +42,13 @@ public class SearchResultAdapter extends BaseAdapter {
 
         ShopMapViewDao shopMapViewDao = new ShopMapViewDao(context);
         shopMapViewDao.readDB();
-        for (int i = 0; i < getCount(); i++)
-            ImageURLList.add(shopMapViewDao.searchId(researchResult.get(i).getId()).get(0));
+        Log.d("Error",String.valueOf(getCount()));
+        for (int i = 0; i < getCount(); i++) {
+            List<MapData> id = shopMapViewDao.searchId(researchResult.get(i).getId());
+            Log.d("Error", String.valueOf(i) + String.valueOf(id.get(0).getId()));
+            ImageURLList.add(id.get(0));
+            Log.d("Error", String.valueOf(i) + ImageURLList.get(i).getImage());
+        }
         shopMapViewDao.closeDB();
 
         shopNameFont = Typeface.createFromAsset(context.getAssets(),"ipaexm.ttf");

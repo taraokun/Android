@@ -98,10 +98,10 @@ public class ShopMapSearchDao {
             contentValues.put(COLUMN_CATEGORYNAME1, mapSearchs.get(i).getCategoryName1());
             contentValues.put(COLUMN_CATEGORYNAME2, mapSearchs.get(i).getCategoryName2());
             contentValues.put(COLUMN_BUDGET, mapSearchs.get(i).getBudget());
-            String wherClause = "name = ? AND category_name1 = ?";
+            String wherClause = "name = ? AND name_kana = ?";
             String whereArgs[] = new String[2];
             whereArgs[0] = mapSearchs.get(i).getName();
-            whereArgs[1] = mapSearchs.get(i).getCategoryName1();
+            whereArgs[1] = mapSearchs.get(i).getNameKana();
             int updateData;
             updateData = db.update(TABLE_NAME, contentValues, wherClause, whereArgs);
             Log.d("Error", "updatedata");
@@ -220,7 +220,7 @@ public class ShopMapSearchDao {
      * @return
      */
     public List<MapSearch> categorySearch(String category){
-
+        Log.d("Error","category_start");
         String whereText = COLUMN_CATEGORYNAME1 + " LIKE ? or " + COLUMN_CATEGORYNAME2 + " LIKE ?";
         String[] categorys = {"%" + category + "%", "%" + category + "%"};
         Cursor cursor = db.query(
@@ -231,6 +231,7 @@ public class ShopMapSearchDao {
                 null,
                 null,
                 null);
+        Log.d("Error","category_end");
         return getDatabaseData(cursor);
     }
 

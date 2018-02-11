@@ -94,7 +94,7 @@ public class SearchKitFoodArea extends AsyncTask<Void, Void, String>{
      */
     private void setSearchData(){
         // アクセスキー
-        String acckey = "Your API Key";
+        String acckey = "Your Api Key";
         int count = 1;
 
         do {
@@ -174,9 +174,9 @@ public class SearchKitFoodArea extends AsyncTask<Void, Void, String>{
 
             for(int i=0; i < words.length(); i++){
                 JSONObject word = words.getJSONObject(i);
-                storeLocalInfomation(word);
                 storeMapData(word);
                 storeMapSearch(word);
+                storeLocalInfomation(word);
             }
 
 

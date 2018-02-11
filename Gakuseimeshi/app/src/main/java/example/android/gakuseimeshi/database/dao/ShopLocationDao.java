@@ -72,10 +72,10 @@ public class ShopLocationDao {
             contentValues.put(COLUMN_NAME, locationInformations.get(i).getName());
             contentValues.put(COLUMN_LATITUDE, String.valueOf(locationInformations.get(i).getLatitude()));
             contentValues.put(COLUMN_LONGITUDE, String.valueOf(locationInformations.get(i).getLongitude()));
-            String wherClause = "latitude = ? AND longitude = ?";
-            String whereArgs[] = new String[2];
-            whereArgs[0] = String.valueOf(locationInformations.get(i).getLatitude());
-            whereArgs[1] = String.valueOf(locationInformations.get(i).getLongitude());
+            String wherClause = "name = ?";
+            String whereArgs[] = new String[1];
+            whereArgs[0] = String.valueOf(locationInformations.get(i).getName());
+            //whereArgs[1] = String.valueOf(locationInformations.get(i).getLongitude());
             int updateData;
             updateData = db.update(TABLE_NAME, contentValues, wherClause, whereArgs);
             if(updateData <= 0){

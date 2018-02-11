@@ -91,6 +91,7 @@ public class ShopMapViewDao {
             int updateData = db.update(TABLE_NAME, contentValues, wherClause, whereArgs);
             if(updateData <= 0){
                 contentValues.put(COLUMN_FAVORITE, 0);
+                Log.d("Error",String.valueOf(contentValues));
                 db.insert(TABLE_NAME, "0", contentValues);
             }
         }
@@ -123,7 +124,6 @@ public class ShopMapViewDao {
      * @return
      */
     public List<MapData> searchId(int id){
-
         String whereText = COLUMN_ID + " = ?";
         String[] id_str = {String.valueOf(id)};
         Cursor cursor = db.query(
@@ -158,6 +158,7 @@ public class ShopMapViewDao {
             mapData.setFavorite(cursor.getInt(8));
             mapDataList.add(mapData);
         }
+        Log.d("Error",String.valueOf(cursor.getCount()));
         return mapDataList;
     }
 
