@@ -94,7 +94,7 @@ public class SearchKitFoodArea extends AsyncTask<Void, Void, String>{
      */
     private void setSearchData(){
         // アクセスキー
-        String acckey = "Your Api Key";
+        String acckey = "Your API Key";
         int count = 1;
 
         do {

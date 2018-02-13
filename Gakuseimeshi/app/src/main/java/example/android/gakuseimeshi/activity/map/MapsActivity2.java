@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -78,6 +79,9 @@ public class MapsActivity2 extends FragmentActivity
     private GoogleApiClient googleApiClient;
 
     public static GoogleMap mMap;
+    //ロケーションアクセスの度合い(0～3)
+    private int gpsStatus = 0;
+
     private final int REQUEST_PERMISSION = 10;
 
     //現在地及び目的地
@@ -126,6 +130,8 @@ public class MapsActivity2 extends FragmentActivity
     //各ステップのポリラインを格納
     private static Polyline step_polyline;
 
+    private boolean showRouteStatus = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,9 +156,14 @@ public class MapsActivity2 extends FragmentActivity
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setNumUpdates(1);
 
+        Log.d("location", String.valueOf(request));
+
         setLocation();
         setDestinationName();
         makeFragment();
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkPermission();
+        }
 
 
         Log.d("MapsActivity2", "onCreate");
@@ -183,6 +194,34 @@ public class MapsActivity2 extends FragmentActivity
         mapFragment.getMapAsync(this);
     }
 
+    // 位置情報許可の確認
+    public void checkPermission() {
+        // 既に許可している場合
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        }
+        // 拒否していた場合
+        else {
+                 requestLocationPermission();
+        }
+    }
+
+    // 許可を求める
+    private void requestLocationPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                       Manifest.permission.ACCESS_FINE_LOCATION)) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSION);
+        } else {
+            Toast toast = Toast.makeText(this,
+                    "許可がないとアプリが実行できません", Toast.LENGTH_SHORT);
+            toast.show();
+            ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, REQUEST_PERMISSION);
+        }
+    }
+
     //mapTypeFragment及びdetailFragmentを生成
     private void makeFragment(){
         mapTypeFragment = new MapTypeFragment();
@@ -198,6 +237,8 @@ public class MapsActivity2 extends FragmentActivity
         detailTransaction.show(detailFragment);
         detailTransaction.commit();
     }
+
+
 
     //目的地をセット
     private void setLocation() {
@@ -225,13 +266,37 @@ public class MapsActivity2 extends FragmentActivity
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED) {
-
+            Log.d("aaaa","aaa");
             return;
         }
         mMap.setMyLocationEnabled(true);
 
         CameraUpdate cUpdata = CameraUpdateFactory.newLatLngZoom(destination, 16);
         mMap.moveCamera(cUpdata);
+        // 二回呼ばれるのを防ぐ
+        if(!showRouteStatus) {
+            showRoute(mMap, present, destination);
+            showRouteStatus = true;
+        }
+    }
+
+    //ロケーションアクセスの度合いの確認
+    private void CheckLocationStatus(){
+        try {
+            gpsStatus = Settings.Secure.getInt(
+                    getContentResolver(), String.valueOf(Settings.Secure.LOCATION_MODE)
+            );
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        /*
+        Toast.makeText(getApplicationContext(), "GPSstatus:" + gpsStatus,
+                Toast.LENGTH_LONG).show();
+        */
+        if(gpsStatus == Settings.Secure.LOCATION_MODE_OFF){
+            LocationInfoDialog locationInfoDialog = new LocationInfoDialog();
+            locationInfoDialog.show(getFragmentManager(), "LocationInfomation");
+        }
     }
 
     private void showRoute(final GoogleMap map, final LatLng presentLatLng, final LatLng destinationLatLng) {
@@ -335,6 +400,7 @@ public class MapsActivity2 extends FragmentActivity
                     .position(new LatLng(destination_latitude,
                             destination_longitude))
                     .title(destination_name));
+            CheckLocationStatus();
         }
     }
 
