@@ -1,11 +1,11 @@
 package example.android.gakuseimeshi.activity.main;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,21 +19,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import example.android.gakuseimeshi.R;
 import example.android.gakuseimeshi.activity.searchResult.SearchResultActivity;
 import example.android.gakuseimeshi.activity.main.expandLayout.ResizeAnimation;
 import example.android.gakuseimeshi.activity.main.expandLayout.StoreInformationLayout;
-import example.android.gakuseimeshi.activity.searchResult.SearchResultActivity;
 import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
+import example.android.gakuseimeshi.database.basicData.MapData;
 import example.android.gakuseimeshi.database.basicData.MapSearch;
 import example.android.gakuseimeshi.database.dao.ShopMapSearchDao;
+import example.android.gakuseimeshi.database.dao.ShopMapViewDao;
 import example.android.gakuseimeshi.gurunavi.UploadAsyncTask;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button detailedButton;
     private CheckBox openCheck;
     private CheckBox studentDiscountCheck;
@@ -112,7 +113,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         allSearchList = shopMapSearchDao.nameSearch(mealName);
                         shopMapSearchDao.closeDB();
                         ArrayList<MapSearch> allSearchArrayList = (ArrayList<MapSearch>)allSearchList;
-                        //Intent intent = new Intent(this, SubActivity2.class);
+                        //Intent intent = new Intent(this, SearchResultActivity.class);
                         Intent intent = new Intent(this, StoreInfomationActivity.class);
                         intent.putExtra("Answers", allSearchArrayList);
                         this.startActivity(intent);
@@ -121,48 +122,45 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     break;
 
                 case R.id.genre_button: //ジャンル選択ボタン
-                    genre = new Intent(MainActivity.this,GenreListActivity.class);
+                    genre = new Intent(MainActivity.this, GenreListActivity.class);
                     startActivity(genre);
                     break;
 
                 case R.id.search_detail_button: //詳細検索ボタン
-                    String category = categoryText.getText().toString();
+                    Intent intent = new Intent(this, SearchResultActivity.class);
+
                     int min = minPrice.getText().toString().isEmpty() ? 0 : Integer.parseInt(minPrice.getText().toString());
                     int max = maxPrice.getText().toString().isEmpty() ? 99999 : Integer.parseInt(maxPrice.getText().toString());
-                    String area = (String)areaSpinner.getSelectedItem();
-                    int open = (openCheck.isChecked()) ? 1 : 0;
-                    int studentDiscount = (studentDiscountCheck.isChecked()) ? 1 : 0;
+                    int isOpen = openCheck.isChecked() ? 1 : 0;
+                    int existsStudentDiscount = studentDiscountCheck.isChecked() ? 1 : 0;
 
-                    shopMapSearchDao.readDB();
+                    intent.putExtra("Category", categoryText.getText().toString());
+                    intent.putExtra("MinPrice", min);
+                    intent.putExtra("MaxPrice", max);
+                    intent.putExtra("Area", (String)areaSpinner.getSelectedItem());
+                    intent.putExtra("OpenTime", isOpen);
+                    intent.putExtra("StudentDiscount", existsStudentDiscount);
+                    /*shopMapSearchDao.readDB();
                     List<MapSearch> allSearchList = new ArrayList<MapSearch>();
                     allSearchList = shopMapSearchDao.detailedSearch(category, min, max, area, open, studentDiscount);
                     shopMapSearchDao.closeDB();
                     ArrayList<MapSearch> allSearchArrayList = (ArrayList<MapSearch>)allSearchList;
-                    Intent intent = new Intent(this, SearchResultActivity.class);
-                    intent.putExtra("Answers", allSearchArrayList);
+                    intent.putExtra("Answers", allSearchArrayList);*/
                     this.startActivity(intent);
-                    //デバッグ
-                    Toast.makeText(
-                            this,
-                            category + ", " + String.valueOf(min) + ", " + String.valueOf(max) + ", " + area + ", " + String.valueOf(open) + ", " + String.valueOf(studentDiscount),
-                            Toast.LENGTH_LONG).show();
                     break;
-
             }
         }
     }
 
-
     //登録
-    //category_text削除
     private void findViews() {
         Mealname = (EditText) findViewById(R.id.search_meal);
         minPrice = (EditText)findViewById(R.id.min_price);
         maxPrice = (EditText)findViewById(R.id.max_price);
         findViewById(R.id.search).setOnClickListener(this);
-        categoryText = (TextView)findViewById(R.id.genre_button);
         findViewById(R.id.genre_button).setOnClickListener(this);
         findViewById(R.id.search_detail_button).setOnClickListener(this);
+        categoryText = (TextView)findViewById(R.id.genre_button);
         detailedContentsAreaLinear = (LinearLayout)findViewById(R.id.detailed_contents_area_linear);
         detailedButton = (Button)findViewById(R.id.detailed_button);
         areaSpinner = (Spinner)findViewById(R.id.Area_spinner);
@@ -173,7 +171,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     //初期化
     private void init() {
-
     }
 
     //スピナー用アダプター
@@ -188,7 +185,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         // ExpandするViewの元のサイズを保持
-        final int originalHeight = detailedContentsAreaLinear.getHeight();
+        final int originalHeight = 552;
         final int btnWidth = detailedButton.getWidth();
         final int btnHeight = detailedButton.getLineHeight();
         //展開ボタン押下時
@@ -215,7 +212,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         });
     }
 
-
     private void startRotateAnim(int toDegrees, int pivotX, int pivotY) {
         // 展開ボタンの180度回転アニメーションを生成
         RotateAnimation rotate = new RotateAnimation(0, toDegrees, pivotX, pivotY);
@@ -224,7 +220,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         detailedButton.startAnimation(rotate);    // アニメーション開始
     }
 
-
     //カスタムレイアウトデバッグ用
     private void customLayoutSet(){
         storeInformationLayout.setShopImage("https://uds.gnst.jp/rest/img/kkb1p5160000/t_001f.jpg");
@@ -232,11 +227,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
         storeInformationLayout.setShopHour("距離：100m  徒歩：3分");
         storeInformationLayout.shopName.setTypeface(Typeface.createFromAsset(getAssets(),"ipaexm.ttf"));
         storeInformationLayout.shopHour.setTypeface(Typeface.createFromAsset(getAssets(),"GenEiAntiqueTN-M.ttf"));
-
     }
-
-    public void moveDetail(View v){
-        Toast.makeText(this,"クリックされました。", Toast.LENGTH_SHORT).show();
-    }
-
 }

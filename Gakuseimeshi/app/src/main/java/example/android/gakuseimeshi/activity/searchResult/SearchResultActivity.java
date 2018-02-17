@@ -1,6 +1,7 @@
 package example.android.gakuseimeshi.activity.searchResult;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,8 +10,11 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import example.android.gakuseimeshi.R;
+import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
 import example.android.gakuseimeshi.database.basicData.MapSearch;
 import example.android.gakuseimeshi.database.dao.ShopMapSearchDao;
 import example.android.gakuseimeshi.database.dao.ShopMapViewDao;
@@ -20,26 +24,40 @@ import example.android.gakuseimeshi.database.dao.ShopMapViewDao;
  * 検索結果画面
  */
 
-public class SearchResultActivity extends Activity implements View.OnFocusChangeListener, SearchView.OnQueryTextListener{
+public class SearchResultActivity extends ListActivity implements View.OnFocusChangeListener, SearchView.OnQueryTextListener {
 
     private ShopMapSearchDao shopMapSearchDao;
-    private ShopMapViewDao shopMapViewDao;
     private SearchView mSearchView;           // 検索窓
-    private ArrayList<MapSearch> resultArrayList;
-    private ListView resultListView;
+    private ArrayList<MapSearch> resultArrayList = new ArrayList<MapSearch>();
+
+    // 検索条件変数
+    private String category;
+    private int minPrice;
+    private int maxPrice;
+    private String area;
+    private int isOpen;
+    private int existsStudentDiscount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_sheet_table);
         shopMapSearchDao = new ShopMapSearchDao(this);
-        shopMapViewDao = new ShopMapViewDao(this);
-        findViews();    // 各部品の結び付け
+        findViews();
         // 検索窓を開いた状態にする(設定していない場合はアイコンをクリックしないと入力箇所が開かない)
         mSearchView.setIconified(false);
         // 検索窓のイベント処理
         mSearchView.setOnQueryTextListener(this);
-        onQueryTextSubmit("");
+
+        Intent intent = this.getIntent();
+        category = intent.getStringExtra("Category");
+        minPrice = intent.getIntExtra("MinPrice", 0);
+        maxPrice = intent.getIntExtra("MaxPrice", 99999);
+        area = intent.getStringExtra("Area");
+        isOpen = intent.getIntExtra("OpenTime", 0);
+        existsStudentDiscount = intent.getIntExtra("StudentDiscount", 0);
+
+        onQueryTextSubmit(mSearchView.getQuery().toString());
     }
 
     /**
@@ -47,8 +65,7 @@ public class SearchResultActivity extends Activity implements View.OnFocusChange
      * findViews()
      */
     private void findViews() {
-        mSearchView = (SearchView)findViewById(R.id.searchView);   // 検索窓
-        resultListView = (ListView)findViewById(R.id.resultList);
+        mSearchView = (SearchView)findViewById(R.id.searchView);    // 検索窓
     }
 
     /**
@@ -62,10 +79,13 @@ public class SearchResultActivity extends Activity implements View.OnFocusChange
     // 検索を始める時
     @Override
     public boolean onQueryTextSubmit(String query) {
-        mSearchView.clearFocus();                 // 検索窓のフォーカスを外す(=キーボードを非表示)
-        resultArrayList = (ArrayList<MapSearch>)getIntent().getSerializableExtra("Answers");
+        // ListViewの項目を全て消す
+        if (resultArrayList.size() != 0) resultArrayList.clear();
+        resultArrayList = detailedSearch(category,minPrice,maxPrice,area,isOpen,existsStudentDiscount);
         SearchResultAdapter adapter = new SearchResultAdapter(this, resultArrayList, R.layout.custom_layout);
-        resultListView.setAdapter(adapter);
+        this.setListAdapter(adapter);
+
+        mSearchView.clearFocus();   // 検索窓のフォーカスを外す(=キーボードを非表示)
 
         return false;
     }
@@ -73,9 +93,25 @@ public class SearchResultActivity extends Activity implements View.OnFocusChange
     // 検索窓のテキストが変わった時
     @Override
     public boolean onQueryTextChange(String newText) {
-        resultArrayList.clear();        // ListViewの項目を全て消す
-
         return false;
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id){
+        super.onListItemClick(l,v,position,id);
+        Intent intent = new Intent(this, StoreInfomationActivity.class);
+        intent.putExtra("StoreId", resultArrayList.get(position).getId());
+        startActivity(intent);
+    }
+
+    // 詳細検索実行メソッド
+    public ArrayList<MapSearch> detailedSearch(String category, int minPrice, int maxPrice, String area, int isOpen, int existsStudentDiscount){
+        shopMapSearchDao.readDB();
+        ArrayList<MapSearch> detailedSearchResult;
+        detailedSearchResult = (ArrayList<MapSearch>)shopMapSearchDao.detailedSearch(category,minPrice,maxPrice,area,isOpen,existsStudentDiscount);
+        shopMapSearchDao.closeDB();
+
+        return detailedSearchResult;
     }
 
 }
