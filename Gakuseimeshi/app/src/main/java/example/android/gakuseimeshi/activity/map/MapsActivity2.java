@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -165,12 +166,20 @@ public class MapsActivity2 extends FragmentActivity
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setNumUpdates(1);
 
+
+
         setLocation();
         setDestinationName();
         makeFragment();
 
         if (Build.VERSION.SDK_INT >= 23) {
             checkPermission();
+            try{
+                Thread.sleep(1000);
+                CheckLocationStatus();
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
         }
 
         Log.d("MapsActivity2", "onCreate");
@@ -557,7 +566,6 @@ public class MapsActivity2 extends FragmentActivity
     public void onConnected(@Nullable Bundle bundle) {
 
         // ACCESS_FINE_LOCATIONへのパーミッションを確認
-
         if (Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(this, android.Manifest.
                 permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;

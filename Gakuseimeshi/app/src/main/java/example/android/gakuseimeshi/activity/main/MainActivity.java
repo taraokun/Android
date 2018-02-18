@@ -46,7 +46,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView categoryText;
     private StoreInformationLayout storeInformationLayout;
     private Intent genre;
+    private Intent intent;
+
     private String areaSpinnerItems[] = {"野々市", "有松","押野", "金沢"};
+    String genreItem;
     private final static int DURATION = 200;
     //2018/1/22 追加 ナカヤマ
     private ShopMapSearchDao shopMapSearchDao;
@@ -97,6 +100,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.putInt("before_entry_day", day);
             editor.commit();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        intent = getIntent();
+        genreItem = intent.getStringExtra("GenreItem");
+        categoryText.setText(genreItem);
     }
 
     //ボタン処理
