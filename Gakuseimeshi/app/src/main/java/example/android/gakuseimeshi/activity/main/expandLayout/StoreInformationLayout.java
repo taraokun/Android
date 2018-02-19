@@ -27,6 +27,7 @@ public class StoreInformationLayout extends LinearLayout {//custom_layout.xmlの
         }else{
             Uri uri = Uri.parse(image_url);
             Uri.Builder builder = uri.buildUpon();
+            shopImage.setTag(image_url);
             ImageAsyncTask task = new ImageAsyncTask(shopImage);
             task.execute(builder);
         }

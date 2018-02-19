@@ -4,10 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,10 +19,12 @@ import java.net.URL;
  */
 
 public class ImageAsyncTask  extends AsyncTask<Uri.Builder, Void, Bitmap> {
-    private ImageView imageView;
+    private final WeakReference<ImageView> mImageViewReference;
+    private String tag = null;
 
     public ImageAsyncTask(ImageView imageView){
-        this.imageView = imageView;
+        mImageViewReference = new WeakReference<ImageView>(imageView);
+        tag = imageView.getTag().toString();
     }
 
     @Override
@@ -32,7 +36,6 @@ public class ImageAsyncTask  extends AsyncTask<Uri.Builder, Void, Bitmap> {
         Bitmap bitmap = null;
 
         try{
-
             URL url = new URL(builder[0].toString());
             connection = (HttpURLConnection)url.openConnection();
             connection.setRequestMethod("GET");
@@ -62,6 +65,13 @@ public class ImageAsyncTask  extends AsyncTask<Uri.Builder, Void, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap result){
         // インターネット通信して取得した画像をImageViewにセットする
-        this.imageView.setImageBitmap(result);
+        if (tag.equals(mImageViewReference.get().getTag())) {
+            if (mImageViewReference != null && result != null) {
+                final ImageView imageView = mImageViewReference.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(result);
+                }
+            }
+        }
     }
 }
