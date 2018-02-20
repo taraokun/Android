@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.util.LruCache;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -16,15 +16,18 @@ import java.net.URL;
 
 /**
  * Created by Tomu on 2018/02/01.
+ * 非同期の画像取得
  */
 
 public class ImageAsyncTask  extends AsyncTask<Uri.Builder, Void, Bitmap> {
     private final WeakReference<ImageView> mImageViewReference;
     private String tag = null;
+    private LruCache<String, Bitmap> mMemoryCache;
 
-    public ImageAsyncTask(ImageView imageView){
+    public ImageAsyncTask(ImageView imageView, LruCache<String, Bitmap> memoryCache){
         mImageViewReference = new WeakReference<ImageView>(imageView);
         tag = imageView.getTag().toString();
+        mMemoryCache = memoryCache;
     }
 
     @Override
@@ -43,6 +46,11 @@ public class ImageAsyncTask  extends AsyncTask<Uri.Builder, Void, Bitmap> {
             inputStream = connection.getInputStream();
 
             bitmap = BitmapFactory.decodeStream(inputStream);
+            if (bitmap != null && mMemoryCache != null) {
+                if (mMemoryCache.get(builder[0].toString()) == null) {
+                    mMemoryCache.put(builder[0].toString(), bitmap);
+                }
+            }
         }catch (MalformedURLException exception){
 
         }catch (IOException exception){

@@ -3,18 +3,12 @@ package example.android.gakuseimeshi.activity.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +18,9 @@ import example.android.gakuseimeshi.R;
 
 public class GenreListActivity extends AppCompatActivity {
     private Intent intent;
-    private static final String genreListItems[] = {"和食", "中華", "フレンチ", "イタリアン", "麺", "ファストフード", "洋食", "喫茶店", "スイーツ", "居酒屋", "揚げ物", "肉", "丼物", "魚", "パン", "定食", "その他"};
+    private static final String genreListItems[] = {"未選択", "和食", "中華", "フレンチ", "イタリアン", "麺", "ファストフード", "洋食", "喫茶店", "スイーツ", "居酒屋", "揚げ物", "肉", "丼物", "魚", "パン", "定食", "その他"};
     private static final String childItem[][] = {
+            {},
             {"おでん", "懐石料理", "天ぷら","和食で検索"},
             {"餃子", "麻婆豆腐", "中華で検索"},
             {"フレンチで検索"},
@@ -88,7 +83,7 @@ public class GenreListActivity extends AppCompatActivity {
 
         genreList.setAdapter(adapter);
 
-        Log.d("onCreate", "inf:");
+        //Log.d("onCreate", "inf:");
 
         genreList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -99,7 +94,8 @@ public class GenreListActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "child clicked " + item.get("GENRE"), Toast.LENGTH_LONG).show();
                 intent = new Intent(GenreListActivity.this, MainActivity.class);
                 intent.putExtra("GenreItem", item.get("GENRE"));
-                startActivity(intent);
+                intent.putExtra("GENRE", true);
+                setResult(RESULT_OK, intent);
                 finish();
                 return false;
             }
@@ -110,6 +106,16 @@ public class GenreListActivity extends AppCompatActivity {
             public boolean onGroupClick(ExpandableListView parent, View view, int groupPosition, long id){
                 ExpandableListAdapter adapter = parent.getExpandableListAdapter();
                 Map<String, String> item = (Map<String,String>) adapter.getGroup(groupPosition);
+                if(adapter.getChildrenCount(groupPosition) == 0){
+                    intent = new Intent(GenreListActivity.this, MainActivity.class);
+
+                    if(item.get("genre").equals("未選択")) intent.putExtra("GenreItem", "");
+                    else intent.putExtra("GenreItem", item.get("genre"));
+
+                    intent.putExtra("GENRE", true);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
                 //Toast.makeText(getApplicationContext(), "parent clicked " + item.get("genre"), Toast.LENGTH_LONG).show();
                 return false;
             }

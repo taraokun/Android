@@ -28,7 +28,7 @@ public class StoreInformationLayout extends LinearLayout {//custom_layout.xmlの
             Uri uri = Uri.parse(image_url);
             Uri.Builder builder = uri.buildUpon();
             shopImage.setTag(image_url);
-            ImageAsyncTask task = new ImageAsyncTask(shopImage);
+            ImageAsyncTask task = new ImageAsyncTask(shopImage,null);
             task.execute(builder);
         }
     }
@@ -48,6 +48,5 @@ public class StoreInformationLayout extends LinearLayout {//custom_layout.xmlの
         shopName = (TextView)layout.findViewById(R.id.shopName);
         shopHour = (TextView)layout.findViewById(R.id.shopHour);
     }
-
 
 }

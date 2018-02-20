@@ -1,23 +1,22 @@
 package example.android.gakuseimeshi.activity.searchResult;
 
-import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.LruCache;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import example.android.gakuseimeshi.R;
 import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
 import example.android.gakuseimeshi.database.basicData.MapSearch;
 import example.android.gakuseimeshi.database.dao.ShopMapSearchDao;
-import example.android.gakuseimeshi.database.dao.ShopMapViewDao;
 
 /**
  * Created by Yusuke on 2018/02/09/.
@@ -29,6 +28,7 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
     private ShopMapSearchDao shopMapSearchDao;
     private SearchView mSearchView;           // 検索窓
     private ArrayList<MapSearch> resultArrayList = new ArrayList<MapSearch>();
+    private LruCache<String, Bitmap> mMemoryCache;
 
     // 検索条件変数
     private String category;
@@ -57,6 +57,16 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
         isOpen = intent.getIntExtra("OpenTime", 0);
         existsStudentDiscount = intent.getIntExtra("StudentDiscount", 0);
 
+        final int memClass = ((ActivityManager)getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+        final int cacheSize = 1024 * 1024 * memClass / 8;
+
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                return bitmap.getByteCount();
+            }
+        };
+
         onQueryTextSubmit(mSearchView.getQuery().toString());
     }
 
@@ -82,7 +92,7 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
         // ListViewの項目を全て消す
         if (resultArrayList.size() != 0) resultArrayList.clear();
         resultArrayList = detailedSearch(category,minPrice,maxPrice,area,isOpen,existsStudentDiscount);
-        SearchResultAdapter adapter = new SearchResultAdapter(this, resultArrayList, R.layout.custom_layout);
+        SearchResultAdapter adapter = new SearchResultAdapter(this, resultArrayList, R.layout.custom_layout, mMemoryCache);
         this.setListAdapter(adapter);
 
         mSearchView.clearFocus();   // 検索窓のフォーカスを外す(=キーボードを非表示)
@@ -113,5 +123,4 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
 
         return detailedSearchResult;
     }
-
 }

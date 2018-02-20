@@ -137,7 +137,8 @@ public class ShopMapSearchDao {
         List<MapSearch> resultList = new ArrayList<MapSearch>();
 
         // 現在は利用できないように設定
-        if(category.isEmpty()){
+        if(!category.isEmpty()){
+            Log.d("Error","categorySearch");
             mapSearchList = categorySearch(category);
             allMapSearchList.add(mapSearchList);
         }

@@ -2,6 +2,8 @@ package example.android.gakuseimeshi.activity.main;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,46 +12,47 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.RotateAnimation;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import example.android.gakuseimeshi.R;
-import example.android.gakuseimeshi.activity.searchResult.SearchResultActivity;
-import example.android.gakuseimeshi.activity.main.expandLayout.ResizeAnimation;
-import example.android.gakuseimeshi.activity.main.expandLayout.StoreInformationLayout;
-import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
-import example.android.gakuseimeshi.database.basicData.MapData;
-import example.android.gakuseimeshi.database.basicData.MapSearch;
-import example.android.gakuseimeshi.database.dao.ShopMapSearchDao;
-import example.android.gakuseimeshi.database.dao.ShopMapViewDao;
-import example.android.gakuseimeshi.gurunavi.UploadAsyncTask;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import example.android.gakuseimeshi.R;
+import example.android.gakuseimeshi.activity.main.expandLayout.ImageUtils;
+import example.android.gakuseimeshi.activity.main.expandLayout.ResizeAnimation;
+import example.android.gakuseimeshi.activity.main.expandLayout.StoreInformationLayout;
+import example.android.gakuseimeshi.activity.searchResult.SearchResultActivity;
+import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
+import example.android.gakuseimeshi.database.basicData.MapSearch;
+import example.android.gakuseimeshi.database.dao.ShopMapSearchDao;
+import example.android.gakuseimeshi.gurunavi.UploadAsyncTask;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    static final int RESULT_CODE = 1000;
     private Button detailedButton;
     private CheckBox openCheck;
     private CheckBox studentDiscountCheck;
     private LinearLayout detailedContentsAreaLinear;
-    private Spinner areaSpinner; //エリア選択スピナー
-    private EditText Mealname;
+    private EditText searchMeal;
     private EditText maxPrice;
     private EditText minPrice;
     private TextView categoryText;
+    private TextView areaText;
+    private ImageView searchBackground;
     private StoreInformationLayout storeInformationLayout;
+    private Intent area;
     private Intent genre;
+    private Intent areaIntent;
     private Intent intent;
-
-    private String areaSpinnerItems[] = {"野々市", "有松","押野", "金沢"};
-    String genreItem;
+    private String areaContent = "";
+    private String genreContent = "";
     private final static int DURATION = 200;
     //2018/1/22 追加 ナカヤマ
     private ShopMapSearchDao shopMapSearchDao;
@@ -63,8 +66,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         findViews();
         init();
-        areaSpinnerAdapter();
+        //areaSpinnerAdapter();
         customLayoutSet();
+
+        Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.food_image2);
+        Bitmap dst = ImageUtils.resizeBitmapToDisplaySize(this, src);
+
+
+        searchBackground.setImageBitmap(dst);
 
         UploadDatabase();
     }
@@ -102,22 +111,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        intent = getIntent();
-        genreItem = intent.getStringExtra("GenreItem");
-        categoryText.setText(genreItem);
-    }
-
     //ボタン処理
     @Override
     public void onClick(View v){
         if (v != null) {
             switch (v.getId()) { //検索
                 case R.id.search:
-                    Mealname.selectAll();
-                    String mealName = Mealname.getText().toString();
+                    searchMeal.selectAll();
+                    String mealName = searchMeal.getText().toString();
                     if (!TextUtils.isEmpty(mealName)){
                         shopMapSearchDao.readDB();
                         List<MapSearch> allSearchList = new ArrayList<MapSearch>();
@@ -132,9 +133,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     break;
 
+                case R.id.area_button:
+                    area = new Intent(MainActivity.this, AreaListActivity.class);
+                    startActivityForResult(area, RESULT_CODE);
+                    break;
+
                 case R.id.genre_button: //ジャンル選択ボタン
                     genre = new Intent(MainActivity.this, GenreListActivity.class);
-                    startActivity(genre);
+                    startActivityForResult(genre, RESULT_CODE);
                     break;
 
                 case R.id.search_detail_button: //詳細検索ボタン
@@ -145,10 +151,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     int isOpen = openCheck.isChecked() ? 1 : 0;
                     int existsStudentDiscount = studentDiscountCheck.isChecked() ? 1 : 0;
 
-                    intent.putExtra("Category", categoryText.getText().toString());
+
+                    intent.putExtra("Category", categoryText.getText().toString().replace("で検索",""));
                     intent.putExtra("MinPrice", min);
                     intent.putExtra("MaxPrice", max);
-                    intent.putExtra("Area", (String)areaSpinner.getSelectedItem());
+                    intent.putExtra("Area", areaText.getText().toString());
                     intent.putExtra("OpenTime", isOpen);
                     intent.putExtra("StudentDiscount", existsStudentDiscount);
                     /*shopMapSearchDao.readDB();
@@ -165,18 +172,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //登録
     private void findViews() {
-        Mealname = (EditText) findViewById(R.id.search_meal);
+        categoryText = (TextView)findViewById(R.id.category_text) ;
+        areaText = (TextView)findViewById(R.id.area_text);
+        searchMeal = (EditText) findViewById(R.id.search_meal);
         minPrice = (EditText)findViewById(R.id.min_price);
         maxPrice = (EditText)findViewById(R.id.max_price);
         findViewById(R.id.search).setOnClickListener(this);
+        findViewById(R.id.area_button).setOnClickListener(this);
         findViewById(R.id.genre_button).setOnClickListener(this);
         findViewById(R.id.search_detail_button).setOnClickListener(this);
-        categoryText = (TextView)findViewById(R.id.genre_button);
         detailedContentsAreaLinear = (LinearLayout)findViewById(R.id.detailed_contents_area_linear);
         detailedButton = (Button)findViewById(R.id.detailed_button);
-        areaSpinner = (Spinner)findViewById(R.id.Area_spinner);
         openCheck = (CheckBox)findViewById(R.id.open_check);
         studentDiscountCheck = (CheckBox)findViewById(R.id.student_discout_check);
+        searchBackground = (ImageView) findViewById(R.id.search_background);
         storeInformationLayout = (StoreInformationLayout)findViewById(R.id.custom_layout1);
     }
 
@@ -184,12 +193,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void init() {
     }
 
-    //スピナー用アダプター
-    private void areaSpinnerAdapter(){
-        ArrayAdapter<String> area_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, areaSpinnerItems);
-        area_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        areaSpinner.setAdapter(area_adapter);
+    protected void onActivityResult( int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if(resultCode == RESULT_OK && requestCode == RESULT_CODE && null != intent
+                && intent.getBooleanExtra("AREA", false) == true) {
+            areaContent = intent.getStringExtra("AREA_CONTENT");
+            areaText.setText(areaContent);
+        } else if (resultCode == RESULT_OK && requestCode == RESULT_CODE && null != intent
+                && intent.getBooleanExtra("GENRE", false) == true) {
+            genreContent = intent.getStringExtra("GenreItem");
+            categoryText.setText(genreContent);
+        }
     }
+
 
     //回転ボタン
     @Override
