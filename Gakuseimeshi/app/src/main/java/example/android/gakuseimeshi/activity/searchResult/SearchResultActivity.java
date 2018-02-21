@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.ListView;
@@ -111,6 +112,8 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
         super.onListItemClick(l,v,position,id);
         Intent intent = new Intent(this, StoreInfomationActivity.class);
         intent.putExtra("StoreId", resultArrayList.get(position).getId());
+        Log.d("getId", String.valueOf(id));
+
         startActivity(intent);
     }
 

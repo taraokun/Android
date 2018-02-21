@@ -18,10 +18,11 @@ import java.util.List;
 
 public class ShopLocationDao {
     private static final String TABLE_NAME = "shoplocation";
+    private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_LATITUDE = "latitude";
     private static final String COLUMN_LONGITUDE = "longitude";
-    private static final String[] COLUMNS = {COLUMN_NAME, COLUMN_LATITUDE, COLUMN_LONGITUDE};
+    private static final String[] COLUMNS = {COLUMN_ID, COLUMN_NAME, COLUMN_LATITUDE, COLUMN_LONGITUDE};
 
     private SQLiteDatabase db = null;
     private SimpleDatabaseHelper helper = null;
@@ -90,7 +91,7 @@ public class ShopLocationDao {
      * @return
      */
     public List<LocationInformation> findAll(){
-        List<LocationInformation> locationList = new ArrayList<LocationInformation>();
+
         Log.d("Error","lodao1");
         Cursor cursor = db.query(
                 TABLE_NAME,
@@ -101,13 +102,39 @@ public class ShopLocationDao {
                 null,
                 null);
         Log.d("Error",String.valueOf(cursor.getCount()));
+        return getDatabaseData(cursor);
+    }
+
+    /**
+     * id検索
+     * @param id
+     * @return
+     */
+    public List<LocationInformation> searchId(int id){
+        String whereText = COLUMN_ID + " = ?";
+        String[] id_str = {String.valueOf(id)};
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                whereText,
+                id_str,
+                null,
+                null,
+                null);
+        return getDatabaseData(cursor);
+    }
+
+    public List<LocationInformation> getDatabaseData(Cursor cursor){
+        List<LocationInformation> locationList = new ArrayList<LocationInformation>();
         while(cursor.moveToNext()) {
             LocationInformation locationInformation = new LocationInformation();
-            locationInformation.setName(cursor.getString(0));
-            locationInformation.setLatitude(cursor.getFloat(1));
-            locationInformation.setLongitude(cursor.getFloat(2));
+            locationInformation.setId(cursor.getInt(0));
+            locationInformation.setName(cursor.getString(1));
+            locationInformation.setLatitude(cursor.getFloat(2));
+            locationInformation.setLongitude(cursor.getFloat(3));
             locationList.add(locationInformation);
         }
+
         return locationList;
     }
 }

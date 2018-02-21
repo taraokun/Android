@@ -3,6 +3,7 @@ package example.android.gakuseimeshi.activity.map;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 import example.android.gakuseimeshi.R;
+import example.android.gakuseimeshi.database.basicData.LocationInformation;
+import example.android.gakuseimeshi.database.dao.ShopLocationDao;
 
 public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
@@ -27,6 +32,11 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     private LatLng destination;
 
     private String destination_name;
+    private int id;
+
+    public MapsActivity(){
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +86,23 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 .title(destination_name));
         CameraUpdate cUpdata = CameraUpdateFactory.newLatLngZoom(destination, 16);
         mMap.moveCamera(cUpdata);
+    }
+
+    /**
+     * 初期化
+     */
+    private void init(){
+        Bundle bundle = getArguments();
+        id = bundle.getInt("id");
+        Log.d("id",String.valueOf(id));
+
+        if(id != -1) {
+            ShopLocationDao shopLocationDao = new ShopLocationDao(getContext());
+            shopLocationDao.readDB();
+            List<LocationInformation> locationInformations = shopLocationDao.searchId(id);
+            Log.d("locationInfomation", String.valueOf(locationInformations.get(0).getLatitude()));
+            shopLocationDao.closeDB();
+        }
     }
 
     //現在位置及び目的地をセット

@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,6 +37,7 @@ import example.android.gakuseimeshi.gurunavi.UploadAsyncTask;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     static final int RESULT_CODE = 1000;
+    private Toolbar toolbar;
     private Button detailedButton;
     private CheckBox openCheck;
     private CheckBox studentDiscountCheck;
@@ -49,8 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private StoreInformationLayout storeInformationLayout;
     private Intent area;
     private Intent genre;
-    private Intent areaIntent;
-    private Intent intent;
     private String areaContent = "";
     private String genreContent = "";
     private final static int DURATION = 200;
@@ -64,15 +64,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setSupportActionBar(toolbar);
         findViews();
         init();
-        //areaSpinnerAdapter();
         customLayoutSet();
 
         Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.food_image2);
         Bitmap dst = ImageUtils.resizeBitmapToDisplaySize(this, src);
-
-
         searchBackground.setImageBitmap(dst);
 
         UploadDatabase();
@@ -94,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DATE);
 
-        Log.d("Error", String.valueOf(year) + "/" + String.valueOf(month) + "/" + String.valueOf(day));
-        Log.d("Error", before_entry_year + "/" + before_entry_month + "/" + before_entry_day);
+//        Log.d("Error", String.valueOf(year) + "/" + String.valueOf(month) + "/" + String.valueOf(day));
+//        Log.d("Error", before_entry_year + "/" + before_entry_month + "/" + before_entry_day);
         if((year > before_entry_year) || (year == before_entry_year && month > before_entry_month)
                 || (year == before_entry_year && month == before_entry_month && day > before_entry_day)){
             uploadAsyncTask = new UploadAsyncTask(this,this);
@@ -172,7 +170,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //登録
     private void findViews() {
-        categoryText = (TextView)findViewById(R.id.category_text) ;
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        categoryText = (TextView)findViewById(R.id.category_text);
         areaText = (TextView)findViewById(R.id.area_text);
         searchMeal = (EditText) findViewById(R.id.search_meal);
         minPrice = (EditText)findViewById(R.id.min_price);

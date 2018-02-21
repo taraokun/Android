@@ -196,6 +196,26 @@ public class ShopMapSearchDao {
     }
 
     /**
+     * id検索
+     * @param id
+     * @return
+     */
+    public List<MapSearch> searchId(int id){
+        String whereText = COLUMN_ID + " = ?";
+        String[] id_str = {String.valueOf(id)};
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                whereText,
+                id_str,
+                null,
+                null,
+                null);
+        return getDatabaseData(cursor);
+    }
+
+
+    /**
      * 名前データから取得
      * 精密検索
      * @return
