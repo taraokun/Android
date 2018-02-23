@@ -8,7 +8,11 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -32,12 +36,14 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
     private LruCache<String, Bitmap> mMemoryCache;
 
     // 検索条件変数
+    private String mealName;
     private String category;
     private int minPrice;
     private int maxPrice;
     private String area;
     private int isOpen;
     private int existsStudentDiscount;
+    private int buttonId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +57,14 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
         mSearchView.setOnQueryTextListener(this);
 
         Intent intent = this.getIntent();
+        mealName = intent.getStringExtra("mealName");
         category = intent.getStringExtra("Category");
         minPrice = intent.getIntExtra("MinPrice", 0);
         maxPrice = intent.getIntExtra("MaxPrice", 99999);
         area = intent.getStringExtra("Area");
         isOpen = intent.getIntExtra("OpenTime", 0);
         existsStudentDiscount = intent.getIntExtra("StudentDiscount", 0);
+        buttonId = intent.getIntExtra("buttonId",R.id.search);
 
         final int memClass = ((ActivityManager)getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         final int cacheSize = 1024 * 1024 * memClass / 8;
@@ -68,7 +76,8 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
             }
         };
 
-        onQueryTextSubmit(mSearchView.getQuery().toString());
+        mSearchView.setQuery(mealName, false);
+        onQueryTextSubmit(mealName);
     }
 
     /**
@@ -76,7 +85,7 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
      * findViews()
      */
     private void findViews() {
-        mSearchView = (SearchView)findViewById(R.id.searchView);    // 検索窓
+        mSearchView = (SearchView)findViewById(R.id.searchView);// 検索窓
     }
 
     /**
@@ -92,7 +101,11 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
     public boolean onQueryTextSubmit(String query) {
         // ListViewの項目を全て消す
         if (resultArrayList.size() != 0) resultArrayList.clear();
-        resultArrayList = detailedSearch(category,minPrice,maxPrice,area,isOpen,existsStudentDiscount);
+        if (buttonId == R.id.search) {
+            resultArrayList = nameSearch(query);
+        } else if (buttonId == R.id.search_detail_button) {
+            resultArrayList = detailedSearch(category, minPrice, maxPrice, area, isOpen, existsStudentDiscount);
+        }
         SearchResultAdapter adapter = new SearchResultAdapter(this, resultArrayList, R.layout.custom_layout, mMemoryCache);
         this.setListAdapter(adapter);
 
@@ -113,6 +126,7 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
         Intent intent = new Intent(this, StoreInfomationActivity.class);
         intent.putExtra("StoreId", resultArrayList.get(position).getId());
         Log.d("getId", String.valueOf(id));
+
         startActivity(intent);
     }
 
@@ -124,5 +138,14 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
         shopMapSearchDao.closeDB();
 
         return detailedSearchResult;
+    }
+
+    public ArrayList<MapSearch> nameSearch(String name) {
+        shopMapSearchDao.readDB();
+        ArrayList<MapSearch> nameSearchResult;
+        nameSearchResult = (ArrayList<MapSearch>)shopMapSearchDao.nameSearch(name);
+        shopMapSearchDao.closeDB();
+
+        return nameSearchResult;
     }
 }

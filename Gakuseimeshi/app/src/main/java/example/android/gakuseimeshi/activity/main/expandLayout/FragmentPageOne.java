@@ -116,31 +116,28 @@ public class FragmentPageOne extends Fragment {
         searchBackground.setImageBitmap(dst);
 
     }
+
     private void searchButtonhClickEvent(View v){
         searchMeal.selectAll();
         String mealName = searchMeal.getText().toString();
-        if (!TextUtils.isEmpty(mealName)) {
-            shopMapSearchDao.readDB();
-            List<MapSearch> allSearchList = new ArrayList<MapSearch>();
-            allSearchList = shopMapSearchDao.nameSearch(mealName);
-            shopMapSearchDao.closeDB();
-            ArrayList<MapSearch> allSearchArrayList = (ArrayList<MapSearch>) allSearchList;
-            //Intent intent = new Intent(this, SearchResultActivity.class);
-            Intent intent = new Intent(getActivity(), StoreInfomationActivity.class);
-            intent.putExtra("Answers", allSearchArrayList);
+        if (!TextUtils.isEmpty(mealName)){
+            Intent intent = new Intent(getActivity(), SearchResultActivity.class);
+            intent.putExtra("mealName", mealName);
+            intent.putExtra("buttonId", R.id.search);
             this.startActivity(intent);
-            Toast.makeText(getActivity(), mealName, Toast.LENGTH_LONG).show();
         }
     }
     private void areaButtonClickEvent(View v){
         area = new Intent(getActivity(), AreaListActivity.class);
         startActivityForResult(area, RESULT_CODE);
     }
+
     private void genreButtonClickEvent(View v) {
         genre = new Intent(getActivity(), GenreListActivity.class);
         startActivityForResult(genre, RESULT_CODE);
 
     }
+
     private void searchDetailButtonClickEvent(View v){
         Intent intent = new Intent(getActivity(), SearchResultActivity.class);
         int min = minPrice.getText().toString().isEmpty() ? 0 : Integer.parseInt(minPrice.getText().toString());
@@ -154,12 +151,7 @@ public class FragmentPageOne extends Fragment {
         intent.putExtra("Area", areaText.getText().toString());
         intent.putExtra("OpenTime", isOpen);
         intent.putExtra("StudentDiscount", existsStudentDiscount);
-        /*shopMapSearchDao.readDB();
-                   List<MapSearch> allSearchList = new ArrayList<MapSearch>();
-                   allSearchList = shopMapSearchDao.detailedSearch(category, min, max, area, open, studentDiscount);
-                   shopMapSearchDao.closeDB();
-                   ArrayList<MapSearch> allSearchArrayList = (ArrayList<MapSearch>)allSearchList;
-                   intent.putExtra("Answers", allSearchArrayList);*/
+        intent.putExtra("buttonId", R.id.search_detail_button);
         this.startActivity(intent);
 
     }
