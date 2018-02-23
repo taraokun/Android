@@ -113,7 +113,6 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
         Intent intent = new Intent(this, StoreInfomationActivity.class);
         intent.putExtra("StoreId", resultArrayList.get(position).getId());
         Log.d("getId", String.valueOf(id));
-
         startActivity(intent);
     }
 

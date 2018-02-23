@@ -94,13 +94,14 @@ public class SearchKitFoodArea extends AsyncTask<Void, Void, String>{
      */
     private void setSearchData(){
         // アクセスキー
+
         String acckey = "Your API Key";
         int count = 1;
 
         do {
             String lat = "36.5310338";
             String lon = "136.6284361";
-            String range = "4";
+            String range = "5";
             String hit_per_page = "100";
             String offset_page = String.valueOf(count);
             String format = "json";

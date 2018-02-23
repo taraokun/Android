@@ -373,7 +373,7 @@ public class MapsActivity2 extends FragmentActivity
                 detailFragment.setTime_and_Distance(time + ", " + distance);
                 setRouteList(result_walk);
                 result_mode = 0;
-                moveCamera(present, destination, 100);
+                moveCamera(present, destination, 200);
                 if (step_polyline != null) {
                     step_polyline.remove();
                 }
@@ -385,7 +385,7 @@ public class MapsActivity2 extends FragmentActivity
                 detailFragment.setTime_and_Distance(time + ", " + distance);
                 setRouteList(result_car);
                 result_mode = 1;
-                moveCamera(present, destination, 100);
+                moveCamera(present, destination, 200);
                 if (step_polyline != null) {
                     step_polyline.remove();
                 }

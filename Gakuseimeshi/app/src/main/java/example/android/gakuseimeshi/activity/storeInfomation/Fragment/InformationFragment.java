@@ -15,12 +15,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import example.android.gakuseimeshi.R;
 import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
 import example.android.gakuseimeshi.database.basicData.MapData;
+import example.android.gakuseimeshi.database.basicData.ReviewData;
 import example.android.gakuseimeshi.database.dao.ShopMapViewDao;
+import example.android.gakuseimeshi.database.dao.ShopReviewDao;
 import example.android.gakuseimeshi.gurunavi.ImageAsyncTask;
 
 public class InformationFragment extends Fragment {
@@ -58,30 +61,9 @@ public class InformationFragment extends Fragment {
         ((TextView)view.findViewById(R.id.access)).setText(access);
         ((TextView)view.findViewById(R.id.opentime)).setText(opentime);
         ((TextView)view.findViewById(R.id.holiday)).setText(holiday);
-
+        // 画像をWeb上から取得しひょじ
         ImageView imageView = (ImageView)    view.findViewById(R.id.storeImage);
-
-        if(!imageURL.equals("{}")) {
-            final Bitmap bitmap = mMemoryCache.get(imageURL);
-
-            if (bitmap != null) {
-                imageView.setImageBitmap(bitmap);
-            } else {
-                imageView.setTag(imageURL);
-                // 画像の設定 "{}"ならno_imageをセットし，URLなら画像を取得してセット
-                if (imageURL.equals("{}")) {
-                    imageView.setImageResource(R.drawable.no_image);
-                } else {
-                    Uri uri = Uri.parse(imageURL);
-                    Uri.Builder builder = uri.buildUpon();
-                    ImageAsyncTask task = new ImageAsyncTask(imageView, mMemoryCache);
-                    task.execute(builder);
-                }
-            }
-        }else{
-            imageView.setImageResource(R.drawable.no_image);
-        }
-
+        showImage(imageView);
 
         return view;
     }
@@ -102,6 +84,50 @@ public class InformationFragment extends Fragment {
     }
 
     /**
+     * 画像の表示
+     * @param imageView
+     */
+    public void showImage(ImageView imageView){
+        Log.d("url", imageURL);
+        if(!imageURL.equals("{}")) {
+            connectImage(imageView);
+        }else{
+            Log.d("name", activity.name);
+            ShopReviewDao shopReviewDao= new ShopReviewDao(getContext());
+            shopReviewDao.readDB();
+            StringBuilder name = new StringBuilder(activity.name);
+            name.delete(name.length() - 1, name.length());
+            activity.name = name.toString();
+            List<ReviewData> reviewDatas = shopReviewDao.searchName(activity.name);
+            shopReviewDao.closeDB();
+            for(int i = 0; i < reviewDatas.size(); i++){
+                Log.d("review", String.valueOf(reviewDatas.get(i).getName()));
+                imageURL = reviewDatas.get(i).getImage();
+                connectImage(imageView);
+            }
+
+            imageView.setImageResource(R.drawable.no_image);
+        }
+    }
+
+    /**
+     *
+     */
+    private void connectImage(ImageView imageView){
+        final Bitmap bitmap = mMemoryCache.get(imageURL);
+
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+        } else {
+            imageView.setTag(imageURL);
+            Uri uri = Uri.parse(imageURL);
+            Uri.Builder builder = uri.buildUpon();
+            ImageAsyncTask task = new ImageAsyncTask(imageView, mMemoryCache);
+            task.execute(builder);
+        }
+    }
+
+    /**
      * 初期化
      */
     private void init(){
@@ -111,10 +137,10 @@ public class InformationFragment extends Fragment {
         ShopMapViewDao shopMapViewDao = new ShopMapViewDao(getContext());
         shopMapViewDao.readDB();
         List<MapData> mapdata = shopMapViewDao.searchId(id);
+        shopMapViewDao.closeDB();
 
         if(id != -1){
             Log.d("mapdata", String.valueOf(mapdata.get(0).getImage()));
-            shopMapViewDao.closeDB();
 
             activity.name = mapdata.get(0).getName();
             genre = mapdata.get(0).getNameKana();

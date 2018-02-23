@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,7 +21,9 @@ import java.util.List;
 import example.android.gakuseimeshi.R;
 import example.android.gakuseimeshi.database.basicData.MapData;
 import example.android.gakuseimeshi.database.basicData.MapSearch;
+import example.android.gakuseimeshi.database.basicData.ReviewData;
 import example.android.gakuseimeshi.database.dao.ShopMapViewDao;
+import example.android.gakuseimeshi.database.dao.ShopReviewDao;
 import example.android.gakuseimeshi.gurunavi.ImageAsyncTask;
 
 import example.android.gakuseimeshi.activity.searchResult.SearchResultActivity;
@@ -37,6 +40,7 @@ public class SearchResultAdapter extends BaseAdapter {
     private Typeface shopHourFont;
     // 2018/02/07 中山 翔夢
     private List<MapData> ImageURLList = new ArrayList<MapData>();
+    private List<ReviewData> reviewDatas = new ArrayList<ReviewData>();
     private LruCache<String, Bitmap> mMemoryCache;
 
     // コンストラクター(コンテキスト、データソース、レイアウトファイルを設定)
@@ -47,16 +51,19 @@ public class SearchResultAdapter extends BaseAdapter {
         this.resource = resource;
         this.mMemoryCache = memoryCache;
 
-        ShopMapViewDao shopMapViewDao = new ShopMapViewDao(context);
-        shopMapViewDao.readDB();
+
         Log.d("Error",String.valueOf(getCount()));
         for (int i = 0; i < getCount(); i++) {
+            ShopMapViewDao shopMapViewDao = new ShopMapViewDao(context);
+            shopMapViewDao.readDB();
             List<MapData> id = shopMapViewDao.searchId(researchResult.get(i).getId());
             Log.d("Error", String.valueOf(i) + String.valueOf(id.get(0).getId()));
             ImageURLList.add(id.get(0));
             Log.d("Error", String.valueOf(i) + ImageURLList.get(i).getImage());
+            shopMapViewDao.closeDB();
         }
-        shopMapViewDao.closeDB();
+
+        setReviewDatas();
 
         shopNameFont = Typeface.createFromAsset(context.getAssets(),"ipaexm.ttf");
         shopHourFont = Typeface.createFromAsset(context.getAssets(),"GenEiAntiqueTN-M.ttf");
@@ -101,6 +108,21 @@ public class SearchResultAdapter extends BaseAdapter {
             // 画像の設定 "{}"ならno_imageをセットし，URLなら画像を取得してセット
             if (imageURL.equals("{}")) {
                 imageView.setImageResource(R.drawable.no_image);
+                List<String> images = setUserImageURL(ImageURLList.get(index).getName());
+
+                if(images.size() != 0){
+                    final Bitmap bitmap2 = mMemoryCache.get(images.get(0));
+                    if(bitmap2 != null){
+                        Log.d("bit2","aaaa");
+                        imageView.setImageBitmap(bitmap2);
+                    }else {
+                        Log.d("no_iamge","aaaa");
+                        Uri uri = Uri.parse(images.get(0));
+                        Uri.Builder builder = uri.buildUpon();
+                        ImageAsyncTask task = new ImageAsyncTask(imageView, mMemoryCache);
+                        task.execute(builder);
+                    }
+                }
             } else {
                 Uri uri = Uri.parse(imageURL);
                 Uri.Builder builder = uri.buildUpon();
@@ -108,6 +130,27 @@ public class SearchResultAdapter extends BaseAdapter {
                 task.execute(builder);
             }
         }
+        /*
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+        } else {
+            imageView.setTag(imageURL);
+            // 画像の設定 "{}"ならno_imageをセットし，URLなら画像を取得してセット
+            if (imageURL.equals("{}")) {
+                List<String> images = setUserImageURL(ImageURLList.get(index).getName());
+                if(images.size() != 0){
+                    Uri uri = Uri.parse(images.get(0));
+                    Uri.Builder builder = uri.buildUpon();
+                    ImageAsyncTask task = new ImageAsyncTask(imageView, mMemoryCache);
+                    task.execute(builder);
+                }
+            } else {
+                Uri uri = Uri.parse(imageURL);
+                Uri.Builder builder = uri.buildUpon();
+                ImageAsyncTask task = new ImageAsyncTask(imageView, mMemoryCache);
+                task.execute(builder);
+            }
+        }*/
 
         ((TextView)convertView.findViewById(R.id.shopName)).setText(item.getName());
         ((TextView)convertView.findViewById(R.id.shopName)).setTypeface(shopNameFont);
@@ -115,5 +158,31 @@ public class SearchResultAdapter extends BaseAdapter {
         ((TextView)convertView.findViewById(R.id.shopHour)).setTypeface(shopHourFont);
 
         return convertView;
+    }
+
+    /**
+     * List<ReviewData>に値を格納
+     */
+    private void setReviewDatas(){
+        ShopReviewDao shopReviewDao = new ShopReviewDao(context);
+        shopReviewDao.readDB();
+        reviewDatas = shopReviewDao.findAll();
+        shopReviewDao.closeDB();
+    }
+
+    private List<String> setUserImageURL(String name){
+        List<String> names = new ArrayList<String>();
+        StringBuilder search_name = new StringBuilder(name);
+        search_name.delete(name.length() - 1, name.length());
+        name = search_name.toString();
+        for(ReviewData reaviewData : reviewDatas){
+            if(reaviewData.getName().equals(name)){
+                names.add(reaviewData.getImage());
+                Log.d("name",reaviewData.getName());
+                Log.d("setUserImageURL", reaviewData.getImage());
+            }
+        }
+
+        return names;
     }
 }

@@ -48,6 +48,7 @@ public class SimpleDatabaseHelper extends SQLiteOpenHelper {
         CreateMapLocationTable(db);
         CreateMapSearchTable(db);
         CreateMapOpentimeTable(db);
+        CreateReviewTable(db);
         Log.d("Error", "helper02");
     }
 
@@ -377,5 +378,13 @@ public class SimpleDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * 口コミ用データベース
+     * @param db
+     */
+    public void CreateReviewTable(SQLiteDatabase db){
+        db.execSQL("CREATE TABLE shopreview (" +
+                "id INTEGER PRIMARY KEY, name TEXT , comment TEXT, image TEXT)");
+    }
 
 }

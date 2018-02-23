@@ -38,6 +38,8 @@ public class UploadAsyncTask extends AsyncTask<String, Void, String> {
         this.m_ProgressDialog.show();
         SearchKitFoodArea searchKitFoodArea = new SearchKitFoodArea(m_context);
         searchKitFoodArea.execute();
+        SearchShopReview searchShopReview = new SearchShopReview(m_context);
+        searchShopReview.execute();
         return;
     }
 
