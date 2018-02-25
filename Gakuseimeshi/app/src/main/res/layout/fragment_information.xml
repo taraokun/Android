@@ -19,15 +19,35 @@
             android:contentDescription="@string/shop_image"
             android:background="#252525"/>
 
-        <TextView
-            android:id="@+id/name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:gravity="left|center_vertical"
-            android:text="店舗名"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:weightSum="20">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:gravity="left|center_vertical"
+                android:text="店舗名"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_weight="3"/>
+
+            <Button
+                android:id="@+id/favorite_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="left|center_vertical"
+                android:layout_weight="17"
+                android:layout_margin="5dp"
+                android:background="@drawable/ic_tab_fav">
+
+            </Button>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/genre"
@@ -87,14 +107,6 @@
             android:gravity="left"
             android:textSize="12dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:gravity="left|bottom"
-            android:text="アクセス"
-            android:textSize="12dp"
-            android:textColor="@android:color/darker_gray"/>
 
         <TextView
             android:id="@+id/access"

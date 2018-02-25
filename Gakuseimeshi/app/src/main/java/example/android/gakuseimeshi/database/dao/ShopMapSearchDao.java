@@ -87,6 +87,10 @@ public class ShopMapSearchDao {
     }
 
 
+    /**
+     * 通信での更新
+     * @param mapSearchs
+     */
     public void replaceDB(List<MapSearch> mapSearchs){
         for(int i=0; i < mapSearchs.size(); i++){
             ContentValues contentValues = new ContentValues();
@@ -117,6 +121,36 @@ public class ShopMapSearchDao {
                 contentValues.put(COLUMN_SEARCHHOLIDAYMONTH, "{}");
                 db.insert(TABLE_NAME, "{}", contentValues);
             }
+        }
+    }
+
+    /**
+     * お気に入り登録
+     * @param favorite
+     * @return
+     */
+    public int updateFavorite(int id, int favorite){
+        try {
+            ContentValues contentValues = new ContentValues();
+            if (favorite == 0) {
+                favorite = 1;
+                contentValues.put(COLUMN_FAVORITE, favorite);
+            } else if (favorite == 1) {
+                favorite = 0;
+                contentValues.put(COLUMN_FAVORITE, favorite);
+            }
+            String wherClause = "id = ?";
+            String whereArgs[] = new String[1];
+            whereArgs[0] = String.valueOf(id);
+
+            int updateData = db.update(TABLE_NAME, contentValues, wherClause, whereArgs);
+            if (updateData <= 0) {
+                return -1;
+            }
+            return favorite;
+        }catch (Exception e){
+            e.printStackTrace();
+            return -1;
         }
     }
 
@@ -193,6 +227,49 @@ public class ShopMapSearchDao {
                 null,
                 null);
         return getDatabaseData(cursor);
+    }
+
+    /**
+     * お気に入り検索
+     * @param favorite
+     * @return
+     */
+    public List<MapSearch> searchFavorite(int favorite){
+        String whereText = COLUMN_FAVORITE + " = ?";
+        String[] id_str = {String.valueOf(favorite)};
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                whereText,
+                id_str,
+                null,
+                null,
+                null);
+        return getDatabaseData(cursor);
+    }
+
+    /**
+     * お気に入りかどうか判定
+     * @param id
+     * @return
+     */
+    public int getFavorite(int id){
+        int favorite = -1;
+        String whereText = COLUMN_ID + " = ?";
+        String[] id_str = {String.valueOf(id)};
+
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                whereText,
+                id_str,
+                null,
+                null,
+                null);
+        while(cursor.moveToNext()){
+            favorite = cursor.getInt(10);
+        }
+        return favorite;
     }
 
     /**

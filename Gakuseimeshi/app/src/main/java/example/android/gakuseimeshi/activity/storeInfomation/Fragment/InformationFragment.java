@@ -12,6 +12,7 @@ import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import example.android.gakuseimeshi.R;
 import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
 import example.android.gakuseimeshi.database.basicData.MapData;
 import example.android.gakuseimeshi.database.basicData.ReviewData;
+import example.android.gakuseimeshi.database.dao.ShopMapSearchDao;
 import example.android.gakuseimeshi.database.dao.ShopMapViewDao;
 import example.android.gakuseimeshi.database.dao.ShopReviewDao;
 import example.android.gakuseimeshi.gurunavi.ImageAsyncTask;
@@ -38,6 +40,7 @@ public class InformationFragment extends Fragment {
     private Uri uri = Uri.parse("tel:" + tel);
     private LruCache<String, Bitmap> mMemoryCache;
     private int id;
+    private int favorite_status;
 
     public InformationFragment(){
 
@@ -72,6 +75,7 @@ public class InformationFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        // 電話番号のクリック処理
         TextView tel = (TextView)getActivity().findViewById(R.id.tel);
         tel.setOnClickListener(new View.OnClickListener() {
 
@@ -81,6 +85,39 @@ public class InformationFragment extends Fragment {
                 startActivity(call);
             }
         });
+
+        final Button favorite = (Button)getActivity().findViewById(R.id.favorite_button);
+        getFavoriteStatus();
+        if(favorite_status == 1) {
+            favorite.setBackgroundResource(R.drawable.fav_on);
+        }else if(favorite_status == 0){
+            favorite.setBackgroundResource(R.drawable.ic_tab_fav);
+        }else if(favorite_status == -1){
+            Log.d("Error","Faild Update Favorite Info");
+        }else{
+            Log.d("Error","Unkwon");
+        }
+
+
+        // お気に入り情報のクリック処理
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                favorite_status = updateFavoriteStatus();
+                if(favorite_status == 1) {
+                    favorite.setBackgroundResource(R.drawable.fav_on);
+                }else if(favorite_status == 0){
+                    favorite.setBackgroundResource(R.drawable.ic_tab_fav);
+                }else if(favorite_status == -1){
+                    Log.d("Error","Faild Update Favorite Info");
+                }else{
+                    Log.d("Error","Unkwon");
+                }
+            }
+        });
+
+
+
     }
 
     /**
@@ -111,7 +148,7 @@ public class InformationFragment extends Fragment {
     }
 
     /**
-     *
+     * urlから画像の表示
      */
     private void connectImage(ImageView imageView){
         final Bitmap bitmap = mMemoryCache.get(imageURL);
@@ -131,13 +168,7 @@ public class InformationFragment extends Fragment {
      * 初期化
      */
     private void init(){
-        Bundle bundle = getArguments();
-        int id = bundle.getInt("id");
-        Log.d("idaaaa", String.valueOf(id));
-        ShopMapViewDao shopMapViewDao = new ShopMapViewDao(getContext());
-        shopMapViewDao.readDB();
-        List<MapData> mapdata = shopMapViewDao.searchId(id);
-        shopMapViewDao.closeDB();
+        List<MapData> mapdata = getIdStatus();
 
         if(id != -1){
             Log.d("mapdata", String.valueOf(mapdata.get(0).getImage()));
@@ -162,5 +193,42 @@ public class InformationFragment extends Fragment {
             };
         }
 
+    }
+
+    /**
+     * id情報から店舗情報データの入手
+     * @return
+     */
+    public List<MapData> getIdStatus(){
+        Bundle bundle = getArguments();
+        id = bundle.getInt("id");
+        ShopMapViewDao shopMapViewDao = new ShopMapViewDao(getContext());
+        shopMapViewDao.readDB();
+        List<MapData> mapdata = shopMapViewDao.searchId(id);
+        shopMapViewDao.closeDB();
+        return mapdata;
+    }
+
+    /**
+     * お気に入り情報の入手
+     */
+    public void getFavoriteStatus(){
+        ShopMapSearchDao shopMapSearchDao = new ShopMapSearchDao(getContext());
+        shopMapSearchDao.readDB();
+        favorite_status = shopMapSearchDao.getFavorite(id);
+        Log.d("favorite",String.valueOf(favorite_status));
+        shopMapSearchDao.closeDB();
+    }
+
+    /**
+     * お気に入り情報の更新
+     */
+    public int updateFavoriteStatus(){
+        ShopMapSearchDao shopMapSearchDao = new ShopMapSearchDao(getContext());
+        shopMapSearchDao.openDB();
+        int updateStatus = shopMapSearchDao.updateFavorite(id, favorite_status);
+        Log.d("favorite",String.valueOf(updateStatus));
+        shopMapSearchDao.closeDB();
+        return updateStatus;
     }
 }
