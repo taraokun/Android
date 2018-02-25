@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#F6F3F3"
     tools:context=".activity.main.MainActivity"
     android:orientation="vertical">
 
@@ -23,7 +23,6 @@
             android:layout_width="wrap_content"
             android:layout_height="56dp"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="70dp"
             android:background="?attr/colorPrimary"
             app:pstsDividerColor="#02a6d8"
             app:pstsIndicatorColor="#fff"
@@ -31,7 +30,6 @@
             app:pstsShouldExpand="false"
             app:pstsUnderlineHeight="0dp"/>
     </android.support.v7.widget.Toolbar>
-
 
     <android.support.v4.view.ViewPager
         android:layout_width="wrap_content"

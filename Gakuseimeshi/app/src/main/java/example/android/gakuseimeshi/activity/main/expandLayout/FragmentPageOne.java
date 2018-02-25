@@ -6,13 +6,12 @@ package example.android.gakuseimeshi.activity.main.expandLayout;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.BootstrapEditText;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -34,7 +35,6 @@ import example.android.gakuseimeshi.R;
 import example.android.gakuseimeshi.activity.main.AreaListActivity;
 import example.android.gakuseimeshi.activity.main.GenreListActivity;
 import example.android.gakuseimeshi.activity.searchResult.SearchResultActivity;
-import example.android.gakuseimeshi.activity.main.expandLayout.StoreInformationLayout;
 import example.android.gakuseimeshi.activity.storeInfomation.StoreInfomationActivity;
 import example.android.gakuseimeshi.database.basicData.MapSearch;
 import example.android.gakuseimeshi.database.dao.ShopMapSearchDao;
@@ -51,12 +51,11 @@ public class FragmentPageOne extends Fragment {
     private CheckBox openCheck;
     private CheckBox studentDiscountCheck;
     private LinearLayout detailedContentsAreaLinear;
-    private EditText searchMeal;
+    private BootstrapEditText searchMeal;
     private EditText maxPrice;
     private EditText minPrice;
     private TextView categoryText;
     private TextView areaText;
-    private StoreInformationLayout storeInformationLayout;
     private Intent area;
     private Intent genre;
     private String areaContent = "";
@@ -85,6 +84,11 @@ public class FragmentPageOne extends Fragment {
         super.onStart();
         findViews();
         UploadDatabase();
+        Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.food_image2);
+        Bitmap dst = ImageUtils.resizeBitmapToDisplaySize(getActivity(), src);
+        searchBackground.setImageBitmap(dst);
+        searchMeal.setPadding(10, 5, 5, 5 );
+
 
         getActivity().findViewById(R.id.search).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,13 +114,7 @@ public class FragmentPageOne extends Fragment {
                 searchDetailButtonClickEvent(v);
             }
         });
-
-        Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.food_image2);
-        Bitmap dst = ImageUtils.resizeBitmapToDisplaySize(getActivity(), src);
-        searchBackground.setImageBitmap(dst);
-
     }
-
     private void searchButtonhClickEvent(View v){
         searchMeal.selectAll();
         String mealName = searchMeal.getText().toString();
@@ -131,13 +129,11 @@ public class FragmentPageOne extends Fragment {
         area = new Intent(getActivity(), AreaListActivity.class);
         startActivityForResult(area, RESULT_CODE);
     }
-
     private void genreButtonClickEvent(View v) {
         genre = new Intent(getActivity(), GenreListActivity.class);
         startActivityForResult(genre, RESULT_CODE);
 
     }
-
     private void searchDetailButtonClickEvent(View v){
         Intent intent = new Intent(getActivity(), SearchResultActivity.class);
         int min = minPrice.getText().toString().isEmpty() ? 0 : Integer.parseInt(minPrice.getText().toString());
@@ -153,22 +149,19 @@ public class FragmentPageOne extends Fragment {
         intent.putExtra("StudentDiscount", existsStudentDiscount);
         intent.putExtra("buttonId", R.id.search_detail_button);
         this.startActivity(intent);
-
     }
 
     private void findViews(){
-        storeInformationLayout = (StoreInformationLayout)getActivity().findViewById(R.id.custom_layout1);
-        categoryText = (TextView)getActivity().findViewById(R.id.category_text);
-        areaText = (TextView) getActivity().findViewById(R.id.area_text);
-        searchMeal = (EditText) getActivity().findViewById(R.id.search_meal);
-        minPrice = (EditText) getActivity().findViewById(R.id.min_price);
-        maxPrice = (EditText) getActivity().findViewById(R.id.max_price);
-        detailedContentsAreaLinear = (LinearLayout) getActivity().findViewById(R.id.detailed_contents_area_linear);
-        detailedButton = (Button) getActivity().findViewById(R.id.detailed_button);
-        openCheck = (CheckBox) getActivity().findViewById(R.id.open_check);
-        studentDiscountCheck = (CheckBox) getActivity().findViewById(R.id.student_discout_check);
-        searchBackground = (ImageView) getActivity().findViewById(R.id.search_background);
-        storeInformationLayout = (StoreInformationLayout) getActivity().findViewById(R.id.custom_layout1);
+        categoryText = getActivity().findViewById(R.id.category_text);
+        areaText = getActivity().findViewById(R.id.area_text);
+        searchMeal = getActivity().findViewById(R.id.search_meal);
+        minPrice = getActivity().findViewById(R.id.min_price);
+        maxPrice = getActivity().findViewById(R.id.max_price);
+        detailedContentsAreaLinear = getActivity().findViewById(R.id.detailed_contents_area_linear);
+        detailedButton = getActivity().findViewById(R.id.detailed_button);
+        openCheck = getActivity().findViewById(R.id.open_check);
+        studentDiscountCheck = getActivity().findViewById(R.id.student_discout_check);
+        searchBackground = getActivity().findViewById(R.id.search_background);
     }
 
     public void UploadDatabase() {

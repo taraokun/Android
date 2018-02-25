@@ -62,7 +62,7 @@ public class InformationFragment extends Fragment {
         ((TextView)view.findViewById(R.id.opentime)).setText(opentime);
         ((TextView)view.findViewById(R.id.holiday)).setText(holiday);
         // 画像をWeb上から取得しひょじ
-        ImageView imageView = (ImageView)    view.findViewById(R.id.storeImage);
+        ImageView imageView = (ImageView)view.findViewById(R.id.storeImage);
         showImage(imageView);
 
         return view;

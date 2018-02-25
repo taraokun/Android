@@ -18,35 +18,40 @@ import example.android.gakuseimeshi.gurunavi.ImageAsyncTask;
 
 public class StoreInformationLayout extends LinearLayout {//custom_layout.xmlのクラス
     private ImageView shopImage;
+    private ImageView favorite;
     public TextView shopName;
     public TextView shopHour;
 
     public void setShopImage(String image_url) {
-        if(image_url.isEmpty()){
+        shopImage.setTag(image_url);
+
+        if (image_url.isEmpty()) {
             this.shopImage.setImageResource(R.drawable.no_image);
-        }else{
+        } else {
             Uri uri = Uri.parse(image_url);
             Uri.Builder builder = uri.buildUpon();
-            shopImage.setTag(image_url);
-            ImageAsyncTask task = new ImageAsyncTask(shopImage,null);
+            //shopImage.setTag(image_url);
+            ImageAsyncTask task = new ImageAsyncTask(shopImage, null);
             task.execute(builder);
         }
     }
 
-    public void setShopName(String string) {shopName.setText(string);}
+    public void setShopName(String string) {
+        shopName.setText(string);
+    }
 
     public void setShopHour(String string) {
         shopHour.setText(string);
     }
 
-    public StoreInformationLayout(Context context, AttributeSet attr){
-        super(context,attr);
+    public StoreInformationLayout(Context context, AttributeSet attr) {
+        super(context, attr);
 
         View layout = LayoutInflater.from(context).inflate(R.layout.custom_layout, this);
-
-        shopImage = (ImageView)layout.findViewById(R.id.shopImage);
-        shopName = (TextView)layout.findViewById(R.id.shopName);
-        shopHour = (TextView)layout.findViewById(R.id.shopHour);
+        favorite = (ImageView) layout.findViewById(R.id.favorite);
+        shopImage = (ImageView) layout.findViewById(R.id.shopImage);
+        shopName = (TextView) layout.findViewById(R.id.shopName);
+        shopHour = (TextView) layout.findViewById(R.id.shopHour);
+        favorite.setImageResource(R.drawable.ic_tab_fav);
     }
-
 }

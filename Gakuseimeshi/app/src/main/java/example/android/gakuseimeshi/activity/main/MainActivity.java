@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         pagerSlidingTabStrip.setViewPager(viewPager);
     }
 
-
     //登録
     private void findViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
