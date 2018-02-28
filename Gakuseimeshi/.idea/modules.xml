@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Gakuseimeshi.iml" filepath="$PROJECT_DIR$/Gakuseimeshi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Gakuseimeshi.iml" filepath="$PROJECT_DIR$/Gakuseimeshi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../../riku/AndroidStudioProjects/Gakuseimesi/Gakuseimeshi/Gakuseimeshi.iml" filepath="$PROJECT_DIR$/../../../../riku/AndroidStudioProjects/Gakuseimesi/Gakuseimeshi/Gakuseimeshi.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

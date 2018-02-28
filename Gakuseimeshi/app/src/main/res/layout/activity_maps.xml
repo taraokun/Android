@@ -6,7 +6,8 @@
     android:orientation="vertical"
     android:background="#def"
     android:weightSum="1"
-    tools:context=".MapsActivity">
+    tools:context=".MapsActivity"
+    android:id="@+id/MapsActivity">
 
     <TextView
         android:layout_width="match_parent"
