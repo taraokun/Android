@@ -11,6 +11,7 @@ import android.util.LruCache;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -33,7 +34,9 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
     private ShopMapSearchDao shopMapSearchDao;
     private SearchView mSearchView;           // 検索窓
     private ArrayList<MapSearch> resultArrayList = new ArrayList<MapSearch>();
+    private ArrayList<MapSearch> mPerPageList = new ArrayList<MapSearch>();
     private LruCache<String, Bitmap> mMemoryCache;
+    private LinearLayout mFooter;
 
     // 検索条件変数
     private String mealName;
@@ -92,9 +95,7 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
      * SearchViewの各イベント処理
      */
     @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        /* Do Nothing */
-    }
+    public void onFocusChange(View v, boolean hasFocus) { /* Do Nothing */ }
 
     // 検索を始める時
     @Override
@@ -106,8 +107,8 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
         } else if (buttonId == R.id.search_detail_button) {
             resultArrayList = detailedSearch(category, minPrice, maxPrice, area, isOpen, existsStudentDiscount);
         }
-        SearchResultAdapter adapter = new SearchResultAdapter(this, resultArrayList, R.layout.custom_layout, mMemoryCache);
-        this.setListAdapter(adapter);
+        makeFooter(20);
+        setListAdapter();
 
         mSearchView.clearFocus();   // 検索窓のフォーカスを外す(=キーボードを非表示)
 
@@ -124,7 +125,7 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
     protected void onListItemClick(ListView l, View v, int position, long id){
         super.onListItemClick(l,v,position,id);
         Intent intent = new Intent(this, StoreInfomationActivity.class);
-        intent.putExtra("StoreId", resultArrayList.get(position).getId());
+        intent.putExtra("StoreId", mPerPageList.get(position).getId());
         Log.d("getId", String.valueOf(id));
 
         startActivity(intent);
@@ -148,4 +149,46 @@ public class SearchResultActivity extends ListActivity implements View.OnFocusCh
 
         return nameSearchResult;
     }
+
+    private void makeFooter(final int itemPerPage) {
+        if (getListView().getFooterViewsCount() > 0) getListView().removeFooterView(mFooter);
+        mFooter = new LinearLayout(this);
+        // ページ数(ai数/1ページあたりの件数 + 件数が割り切れなければ+1)
+        final int numOfPage = resultArrayList.size()/itemPerPage + (resultArrayList.size()%itemPerPage==0 ? 0 : 1);
+        for (int i = 1; i <= numOfPage; i++) {
+            Button pageButton = new Button(this);
+            pageButton.setText(String.valueOf(i));
+            pageButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    (int)getResources().getDimension(R.dimen.width40),
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            pageButton.setTag(i);
+            pageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // (ページ番号-1) * 1ページあたりの件数
+                    int firstItemIndexPerPage = (Integer.parseInt(view.getTag().toString())-1)*itemPerPage;
+                    // ページ番号が最後のページなら全体のアイテム数をセット、そうでなければ(ページ番号 * 1ページあたりの件数)をセット
+                    int lastItemIndexPerPage = Integer.parseInt(view.getTag().toString()) == numOfPage ? resultArrayList.size() : Integer.parseInt(view.getTag().toString())*itemPerPage;
+                    // リストのサイズが0以外ならクリア
+                    if(mPerPageList.size() != 0) mPerPageList.clear();
+                    for (int i = firstItemIndexPerPage; i < lastItemIndexPerPage; i++) {
+                        mPerPageList.add(resultArrayList.get(i));
+                    }
+                    setTheme(android.R.style.Theme);
+                    setListAdapter();
+                }
+            });
+            if(i == 1) pageButton.performClick();
+            mFooter.addView(pageButton);
+        }
+        mFooter.setGravity(Gravity.CENTER_HORIZONTAL);
+        getListView().addFooterView(mFooter);
+    }
+
+    private void setListAdapter() {
+        SearchResultAdapter adapter = new SearchResultAdapter(this, mPerPageList, R.layout.custom_layout, mMemoryCache);
+        this.setListAdapter(adapter);
+    }
+
 }
