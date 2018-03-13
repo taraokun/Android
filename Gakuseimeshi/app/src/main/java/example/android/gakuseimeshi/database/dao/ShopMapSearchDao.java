@@ -2,13 +2,18 @@ package example.android.gakuseimeshi.database.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import example.android.gakuseimeshi.R;
 import example.android.gakuseimeshi.database.basicData.MapSearch;
 import example.android.gakuseimeshi.database.databaseHelper.SimpleDatabaseHelper;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,9 +55,7 @@ public class ShopMapSearchDao {
 
     public ShopMapSearchDao(Context context){
         this.context = context;
-        Log.d("Error","aaaaa");
         helper = new SimpleDatabaseHelper(this.context);
-        Log.d("Error","bbbbb");
     }
 
     /**
@@ -151,6 +154,43 @@ public class ShopMapSearchDao {
         }catch (Exception e){
             e.printStackTrace();
             return -1;
+        }
+    }
+
+
+    /**
+     * 学割情報の更新処理
+     */
+    public void updateStudentDiscountInfo(){
+        InputStream inputStream = null;
+        BufferedReader bufferedReader = null;
+        try{
+            try {
+                Resources res = context.getResources();
+                inputStream = res.openRawResource(R.raw.student_discount_data);
+                bufferedReader =
+                        new BufferedReader(new InputStreamReader(inputStream));
+                String str;
+                while ((str = bufferedReader.readLine()) != null) {
+                    try {
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(COLUMN_STUDENTDISCOUNT, 1);
+                        String wherClause = "name LIKE ?";
+                        String whereArgs[] = new String[1];
+                        whereArgs[0] = "%" + str + "%";
+                        Log.d("updateStudentDiscount", str);
+                        db.update(TABLE_NAME, contentValues, wherClause, whereArgs);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
+            } finally {
+                if (inputStream != null) inputStream.close();
+                if (bufferedReader != null) bufferedReader.close();
+            }
+        } catch (Exception e){
+            // エラー発生時の処理
         }
     }
 

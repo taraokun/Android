@@ -40,21 +40,16 @@ public class FavoritePageFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         view = inflater.inflate(R.layout.favorite_list, container, false);
-
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
         shopMapSearchDao = new ShopMapSearchDao(getActivity());
-
         final int memClass = ((ActivityManager)getActivity().getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         final int cacheSize = 1024 * 1024 * memClass / 8;
-
         mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap bitmap) {
@@ -112,4 +107,5 @@ public class FavoritePageFragment extends Fragment{
 
         return favoriteSearchResult;
     }
+
 }

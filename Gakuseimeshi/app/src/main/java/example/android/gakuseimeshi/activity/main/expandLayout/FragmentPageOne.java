@@ -127,6 +127,7 @@ public class FragmentPageOne extends Fragment {
         area = new Intent(getActivity(), AreaListActivity.class);
         startActivityForResult(area, RESULT_CODE);
     }
+
     private void genreButtonClickEvent(View v) {
         genre = new Intent(getActivity(), GenreListActivity.class);
         startActivityForResult(genre, RESULT_CODE);

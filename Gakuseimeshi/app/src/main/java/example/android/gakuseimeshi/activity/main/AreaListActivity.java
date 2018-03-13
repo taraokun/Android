@@ -47,8 +47,9 @@ public class AreaListActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     intent = new Intent(AreaListActivity.this, MainActivity.class);
+                    String area = areaName.getText().toString().equals("未選択") == true ? "" : areaName.getText().toString();
                     if(v.getTag().equals("0")) intent.putExtra("AREA_CONTENT", "");
-                    else intent.putExtra("AREA_CONTENT", (String)areaName.getText().toString());
+                    else intent.putExtra("AREA_CONTENT", area);
 
                     intent.putExtra("AREA", true);
                     setResult(RESULT_OK, intent);

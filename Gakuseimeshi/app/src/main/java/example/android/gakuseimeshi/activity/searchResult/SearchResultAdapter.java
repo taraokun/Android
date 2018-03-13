@@ -38,7 +38,6 @@ public class SearchResultAdapter extends BaseAdapter {
     private int resource = 0;
     private Typeface shopNameFont;
     private Typeface shopHourFont;
-    // 2018/02/07 中山 翔夢
     private List<MapData> ImageURLList = new ArrayList<MapData>();
     private List<ReviewData> reviewDatas = new ArrayList<ReviewData>();
     private LruCache<String, Bitmap> mMemoryCache;

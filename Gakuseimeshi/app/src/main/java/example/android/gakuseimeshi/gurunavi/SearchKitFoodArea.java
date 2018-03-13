@@ -71,6 +71,7 @@ public class SearchKitFoodArea extends AsyncTask<Void, Void, String>{
         shopMapSearchDao = new ShopMapSearchDao(context);
         shopMapSearchDao.openDB();
         shopMapSearchDao.replaceDB(mapSearchs);
+        shopMapSearchDao.updateStudentDiscountInfo();
         shopMapSearchDao.closeDB();
 
         ShopMapViewDao shopMapViewDao;

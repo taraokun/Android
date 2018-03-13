@@ -36,6 +36,7 @@ public class ShopMapViewDao {
     /*public ShopMapViewDao(SQLiteDatabase db){
         this.db = db;
     }*/
+
     public ShopMapViewDao(Context context){
         this.context = context;
         helper = new SimpleDatabaseHelper(this.context);

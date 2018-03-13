@@ -264,7 +264,9 @@
 
             <example.android.gakuseimeshi.activity.main.expandLayout.StoreInformationLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content">
+            </example.android.gakuseimeshi.activity.main.expandLayout.StoreInformationLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

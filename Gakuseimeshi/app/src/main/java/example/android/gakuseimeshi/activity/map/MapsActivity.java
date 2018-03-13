@@ -47,6 +47,11 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
+    private Typeface shopNameFont;
+    private Typeface shopDetailFont;
+    private String nameKana;
+    private StoreInfomationActivity activity = new StoreInfomationActivity();
+
     protected static double destination_latitude;
     protected static double destination_longitude;
 
@@ -54,7 +59,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     protected static String destination_name;
     protected static String address;
-    private int id;
+    protected static int id;
 
     protected static String imageURL = "{}";
     protected static LruCache<String, Bitmap> mMemoryCache;
@@ -132,6 +137,13 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
 
+        ((TextView)view.findViewById(R.id.shopName2)).setText(activity.name);
+        ((TextView)view.findViewById(R.id.shopName2)).setTypeface(shopNameFont);
+
+        ((TextView)view.findViewById(R.id.nameKana)).setText(nameKana);
+        ((TextView)view.findViewById(R.id.nameKana)).setTypeface(shopDetailFont);
+        ((TextView)view.findViewById(R.id.address2)).setText(address);
+        ((TextView)view.findViewById(R.id.address2)).setTypeface(shopDetailFont);
         setLocation();
         setDestinationName();
 
@@ -207,6 +219,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
             Log.d("mapdata", String.valueOf(mapdata.get(0).getImage()));
             shopMapViewDao.closeDB();
+            activity.name = mapdata.get(0).getName();
+            imageURL = mapdata.get(0).getImage();
+            address = mapdata.get(0).getAddress();
+            nameKana = mapdata.get(0).getNameKana();
 
             imageURL = mapdata.get(0).getImage();
             address = mapdata.get(0).getAddress();

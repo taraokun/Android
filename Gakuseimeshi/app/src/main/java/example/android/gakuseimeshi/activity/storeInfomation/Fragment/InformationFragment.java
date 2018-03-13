@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -42,6 +43,9 @@ public class InformationFragment extends Fragment {
     private int id;
     private int favorite_status;
 
+    private Typeface shopNameFont;
+    private Typeface shopDetailFont;
+
     public InformationFragment(){
 
     }
@@ -56,6 +60,9 @@ public class InformationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        shopNameFont = Typeface.createFromAsset(getContext().getAssets(),"ipaexm.ttf");
+        shopDetailFont = Typeface.createFromAsset(getContext().getAssets(),"GenEiAntiqueTN-M.ttf");
         View view = inflater.inflate(R.layout.fragment_information, container, false);
         ((TextView)view.findViewById(R.id.name)).setText(activity.name);
         ((TextView)view.findViewById(R.id.genre)).setText(genre);

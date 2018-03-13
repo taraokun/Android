@@ -1,24 +1,51 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#def"
+    android:background="#ffffff"
     android:weightSum="1"
     tools:context=".MapsActivity"
     android:id="@+id/MapsActivity">
 
+    <!--    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.15"
+            android:text="店舗名"
+            android:textSize="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/shopName2" />
+    -->
     <TextView
+        android:id="@+id/shopName2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.15"
-        android:text="aaaaaaaaaa"
-        android:textSize="20dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="left|center_vertical"
+        android:text="店舗名"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_weight="0.08"
+        android:background="#ffffff"/>
+
+
+    <TextView
+        android:id="@+id/nameKana"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:gravity="left"
+        android:text="フリガナ"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_weight="0.07" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -31,5 +58,29 @@
         tools:context="example.android.samplemap1.MapsActivity"
         map:uiZoomControls="true"/>
 
+    <com.beardedhen.androidbootstrap.AwesomeTextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.03"
+        android:gravity="left"
+        android:textSize="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        app:bootstrapText="{fa-home} 住所"
+        app:bootstrapBrand="regular"
+        app:fontAwesomeIcon="fa_android"/>
+    <TextView
+        android:id="@+id/address2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.26"
+        android:textSize="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.01"
+        android:background="#f4a460"/>
 </LinearLayout>
